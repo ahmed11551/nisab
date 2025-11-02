@@ -1,5 +1,4 @@
 import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { useState } from 'react'
 import { campaignsApi } from '../services/api'
@@ -32,19 +31,16 @@ const categories = [
 ]
 
 const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
-  const { t } = useTranslation()
   const tg = useTelegramWebApp()
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
 
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<CampaignFormData>({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm<CampaignFormData>({
     defaultValues: {
       category: '',
       goal_amount: 0,
     },
   })
-
-  const imageUrl = watch('image_url')
 
   const mutation = useMutation(
     (data: CampaignFormData) =>
@@ -227,9 +223,10 @@ const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
           <input
             type="text"
             {...register('image_url', {
-              validate: (value) => {
+              validate: (value: string | undefined) => {
                 if (!value && !imageFile) return true // Опциональное поле
                 if (imageFile) return true // Если загружен файл, URL не нужен
+                if (!value) return true
                 // Принимаем любые URL, включая без протокола
                 const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i
                 if (urlPattern.test(value) || value.startsWith('www.') || value.includes('.')) {
