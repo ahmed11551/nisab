@@ -32,55 +32,61 @@ nisab/
 
 ### Установка
 
-1. Клонируйте репозиторий:
+1. **Клонируйте репозиторий:**
 ```bash
-git clone <repository-url>
+git clone https://github.com/ahmed11551/nisab.git
 cd nisab
 ```
 
-2. Установите зависимости:
+2. **Установите зависимости:**
 ```bash
 npm run install:all
 ```
 
-3. Настройте окружение:
+3. **Создайте файлы .env:**
+
+   **backend/.env:**
+   ```env
+   DATABASE_URL=postgresql://nisab:nisab_password@localhost:5432/nisab_db
+   TELEGRAM_BOT_TOKEN=your_bot_token_here
+   TELEGRAM_WEBAPP_SECRET=your_webapp_secret_here
+   CORS_ORIGIN=http://localhost:5173
+   API_TOKEN=test_token_123
+   BOT_E_REPLIKA_URL=https://bot.e-replika.ru
+   ```
+
+   **frontend/.env:**
+   ```env
+   VITE_API_URL=http://localhost:3000
+   ```
+
+4. **Запустите PostgreSQL:**
 ```bash
-# Создайте файлы .env
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
+# Через Docker (рекомендуется)
+docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=nisab_password -e POSTGRES_DB=nisab_db postgres
+
+# Или локально
+createdb nisab_db
 ```
 
-4. Запустите базу данных (Docker):
-```bash
-docker-compose up -d postgres redis elasticsearch
-```
-
-5. Настройте переменные окружения в `backend/.env`:
-- `DATABASE_URL` - строка подключения к PostgreSQL
-- `TELEGRAM_BOT_TOKEN` - токен Telegram бота (получите через @BotFather)
-- `TELEGRAM_WEBAPP_SECRET` - секрет для валидации WebApp
-- `YOOKASSA_SHOP_ID` и `YOOKASSA_SECRET_KEY` - ключи YooKassa
-- `CLOUDPAYMENTS_PUBLIC_ID` и `CLOUDPAYMENTS_SECRET_KEY` - ключи CloudPayments
-- `ELASTICSEARCH_URL` - URL Elasticsearch (http://localhost:9200)
-- `API_TOKEN` - токен для bot.e-replika.ru (test_token_123)
-
-6. Запустите миграции базы данных:
+5. **Запустите миграции:**
 ```bash
 cd backend
 npm run migrate
-npm run seed  # Опционально, для тестовых данных
 ```
 
-7. Запустите проект:
+6. **Запустите проект:**
 ```bash
 npm run dev
 ```
 
-8. Проверьте работу:
-- Backend: http://localhost:3000/health
+7. **Проверьте работу:**
 - Frontend: http://localhost:5173
+- Backend: http://localhost:3000/health
 
-**📖 Подробная инструкция:** См. [SETUP_GUIDE.md](./SETUP_GUIDE.md) для детальных инструкций по настройке.
+**📖 Полная инструкция:** См. [START_HERE.md](./START_HERE.md) для начала работы.
+
+**🎯 Следующие шаги:** См. [NEXT_STEPS.md](./NEXT_STEPS.md) для деплоя и настройки production.
 
 ## 📁 Структура проекта
 
