@@ -4,6 +4,7 @@ import { useMutation } from 'react-query'
 import { donationsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
 import ErrorMessage from '../components/ErrorMessage'
+import PaymentForm from '../components/PaymentForm'
 import './SupportPage.css'
 
 const SupportPage = () => {
