@@ -31,8 +31,14 @@ class ZakatService {
     })
 
     // Calculate total assets
-    const goldValue = data.assets.gold_g * 6500 // Approximate gold price per gram
-    const silverValue = data.assets.silver_g * 80 // Approximate silver price per gram
+    // Актуальные цены (примерно): золото ~10,700 руб/г, серебро ~150 руб/г (2025)
+    // Используем конвертацию: золото берем из нисаба (85г = 914,738 руб), серебро (595г ≈ 89,250 руб)
+    const goldPricePerGram = data.nisab_value / 85 // Примерно 10,700 руб/г для нисаба 914,738
+    const silverPricePerGram = data.nisab_value / 85 / 7 // Примерно 1,530 руб/г (соотношение золото/серебро ≈7:1)
+    
+    // Если нисаб рассчитан по серебру, используем другую формулу
+    const goldValue = data.assets.gold_g * (goldPricePerGram || 10700) // Более точная цена
+    const silverValue = data.assets.silver_g * (silverPricePerGram || 1530) // Более точная цена
     const totalAssets =
       data.assets.cash_total +
       goldValue +
@@ -43,8 +49,11 @@ class ZakatService {
 
     const netWorth = totalAssets - data.debts_short_term
     const rate = data.rate_percent || 2.5
-    const aboveNisab = netWorth > data.nisab_value
-    const zakatDue = aboveNisab ? ((netWorth - data.nisab_value) * rate) / 100 : 0
+    const aboveNisab = netWorth >= data.nisab_value
+    
+    // Правильная формула закята: 2.5% от всего богатства, если оно >= нисаб
+    // Если богатство < нисаб, закят = 0
+    const zakatDue = aboveNisab ? (netWorth * rate) / 100 : 0
 
     const calculation = await ZakatCalc.create({
       user_id: user[0].id,

@@ -21,10 +21,18 @@ async function seed() {
     // await User.destroy({ where: {}, truncate: true })
     // await Fund.destroy({ where: {}, truncate: true })
 
+    // Проверяем, есть ли уже фонды
+    const existingFunds = await Fund.count()
+    if (existingFunds > 0) {
+      logger.info(`Found ${existingFunds} existing funds, skipping seed`)
+      await sequelize.close()
+      return
+    }
+
     // Создание тестовых фондов
     const funds = await Fund.bulkCreate([
       {
-        name: 'Фонд помощи сиротам',
+        name: 'Фонд помощи сиротам "Милосердие"',
         country_code: 'RU',
         purposes: ['orphans'],
         categories: ['orphans'],
@@ -43,7 +51,7 @@ async function seed() {
         verified: true,
         partner_enabled: true,
         active: true,
-        short_desc: 'Международная благотворительная помощь',
+        short_desc: 'Международная благотворительная помощь нуждающимся',
         website: 'https://example.org',
         social_links: [],
       },
@@ -55,11 +63,35 @@ async function seed() {
         verified: true,
         partner_enabled: true,
         active: true,
-        short_desc: 'Развитие исламской инфраструктуры',
+        short_desc: 'Развитие исламской инфраструктуры в Казахстане',
         website: 'https://example.org',
         social_links: [],
       },
-    ])
+      {
+        name: 'Фонд поддержки образования',
+        country_code: 'UZ',
+        purposes: ['education'],
+        categories: ['education'],
+        verified: true,
+        partner_enabled: true,
+        active: true,
+        short_desc: 'Финансовая поддержка студентов и образовательных программ',
+        website: 'https://example.org',
+        social_links: [],
+      },
+      {
+        name: 'Фонд медицинской помощи',
+        country_code: 'TR',
+        purposes: ['intl'],
+        categories: ['intl'],
+        verified: false,
+        partner_enabled: true,
+        active: true,
+        short_desc: 'Оказание медицинской помощи нуждающимся',
+        website: 'https://example.org',
+        social_links: [],
+      },
+    ], { ignoreDuplicates: true })
 
     logger.info(`Created ${funds.length} funds`)
 

@@ -80,6 +80,18 @@ export const authenticateTelegram = (
 ) => {
   try {
     const initData = req.headers['x-telegram-init-data'] as string
+    
+    // В режиме разработки разрешаем работу без аутентификации
+    if (config.env === 'development' && !initData) {
+      // Создаем тестового пользователя для разработки
+      req.user = {
+        id: 999999999, // Тестовый ID
+        firstName: 'Test',
+        username: 'test_user',
+      }
+      return next()
+    }
+
     if (!initData) {
       throw new AppError('Telegram init data required', 401)
     }
@@ -97,6 +109,15 @@ export const authenticateTelegram = (
 
     next()
   } catch (error) {
+    // В режиме разработки не блокируем запросы
+    if (config.env === 'development') {
+      req.user = {
+        id: 999999999,
+        firstName: 'Test',
+        username: 'test_user',
+      }
+      return next()
+    }
     next(new AppError('Authentication failed', 401))
   }
 }

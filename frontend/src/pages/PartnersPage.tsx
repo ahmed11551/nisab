@@ -10,11 +10,18 @@ const PartnersPage = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
 
-  const { data: countries } = useQuery('partner-countries', () =>
-    partnersApi.getCountries().then((res) => res.data)
+  const { data: countries, error: countriesError } = useQuery(
+    'partner-countries',
+    () => partnersApi.getCountries().then((res) => res.data),
+    {
+      retry: 1,
+      onError: (error) => {
+        console.error('Failed to load countries:', error)
+      },
+    }
   )
 
-  const { data: funds, isLoading } = useQuery(
+  const { data: funds, isLoading, error: fundsError } = useQuery(
     ['partner-funds', selectedCountry, selectedCategories],
     () =>
       partnersApi
@@ -23,7 +30,13 @@ const PartnersPage = () => {
           categories: selectedCategories.join(',') || undefined,
         })
         .then((res) => res.data),
-    { enabled: true }
+    {
+      enabled: true,
+      retry: 1,
+      onError: (error) => {
+        console.error('Failed to load funds:', error)
+      },
+    }
   )
 
   return (
@@ -47,10 +60,15 @@ const PartnersPage = () => {
 
       {isLoading ? (
         <div className="loading">{t('common.loading')}</div>
+      ) : fundsError || countriesError ? (
+        <div className="error-message">
+          <p>Ошибка загрузки данных. Проверьте подключение к серверу.</p>
+          <p>Для разработки используйте тестовые данные.</p>
+        </div>
       ) : (
         <>
           <div className="funds-list">
-            {funds?.items?.length > 0 ? (
+            {funds?.items && funds.items.length > 0 ? (
               funds.items.map((fund: any) => (
                 <div key={fund.id} className="fund-card">
                   {fund.logo_url && (
@@ -81,9 +99,10 @@ const PartnersPage = () => {
               ))
             ) : (
               <div className="empty-state">
-                <p>{t('partners.noPartners')}</p>
+                <p>Фонды-партнёры не найдены</p>
+                <p>Попробуйте выбрать другую страну или категорию</p>
                 <Link to="/partners/apply" className="apply-link">
-                  {t('partners.apply')}
+                  {t('partners.apply')} - Стать партнёром
                 </Link>
               </div>
             )}
