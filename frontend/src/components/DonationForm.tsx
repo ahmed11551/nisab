@@ -162,6 +162,8 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
           <PaymentForm
             amount={amount}
             currency="RUB"
+            donationType="donation"
+            donationData={{ fund_id: fundId }}
             onSuccess={() => {
               setShowPaymentForm(false)
               toast.success('Платеж успешно обработан! Спасибо за ваше пожертвование 🙏', 5000)

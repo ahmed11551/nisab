@@ -149,6 +149,8 @@ const CampaignDonateForm = ({ campaignId, onSuccess, onError }: CampaignDonateFo
           <PaymentForm
             amount={amount}
             currency="RUB"
+            donationType="campaign"
+            donationData={{ campaign_id: campaignId }}
             onSuccess={() => {
               setShowPaymentForm(false)
               toast.success('Платеж успешно обработан! Спасибо за ваше пожертвование 🙏', 5000)

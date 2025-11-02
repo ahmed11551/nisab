@@ -327,7 +327,12 @@ export const isDemoMode = () => {
   if (typeof window !== 'undefined') {
     const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     
-    // В режиме разработки, если API недоступен - используем демо
+    // В режиме разработки ВСЕГДА используем демо-режим по умолчанию
+    if (isDev) {
+      demoModeCache = true
+      return true
+    }
+    
     // В production - всегда пытаемся использовать реальный API
     if (!isDev) {
       demoModeCache = false
@@ -335,9 +340,9 @@ export const isDemoMode = () => {
     }
   }
 
-  // По умолчанию в dev режиме демо выключен, но будет автоматически активироваться при ошибках сети
-  demoModeCache = false
-  return false
+  // По умолчанию включаем демо-режим для удобства разработки и демонстрации
+  demoModeCache = true
+  return true
 }
 
 // Функция для принудительного включения демо-режима (вызывается при сетевых ошибках)

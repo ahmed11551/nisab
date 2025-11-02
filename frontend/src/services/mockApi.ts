@@ -1,5 +1,6 @@
 // Mock API для работы приложения без бэкенда
 // Имитирует работу реального API
+// Данные сохраняются в памяти для реалистичной работы
 
 import {
   DEMO_FUNDS,
@@ -13,6 +14,13 @@ import {
 
 // Имитация задержки API
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+// Хранилище данных в памяти для демо-режима (позволяет добавлять/изменять данные)
+let inMemoryFunds = [...DEMO_FUNDS]
+let inMemoryCampaigns = [...DEMO_CAMPAIGNS]
+let inMemoryPartners = [...DEMO_PARTNERS]
+let inMemoryHistory = [...DEMO_HISTORY]
+let inMemoryReports = [...DEMO_REPORTS]
 
 // Мок ответа API
 // Возвращает ответ в формате { data: { success: true, data: ... } }
@@ -38,7 +46,7 @@ export const mockApi = {
       from?: number
       size?: number
     }) => {
-      let funds = [...DEMO_FUNDS]
+      let funds = [...inMemoryFunds]
 
       // Фильтрация по стране
       if (params?.country) {
@@ -89,7 +97,7 @@ export const mockApi = {
     },
 
     get: async (id: string) => {
-      const fund = DEMO_FUNDS.find(f => f.id === id)
+      const fund = inMemoryFunds.find(f => f.id === id)
       if (!fund) {
         return mockResponse({
           success: false,
@@ -112,7 +120,7 @@ export const mockApi = {
       from?: number
       size?: number
     }) => {
-      let campaigns = [...DEMO_CAMPAIGNS]
+      let campaigns = [...inMemoryCampaigns]
 
       // Фильтрация по статусу
       if (params?.status) {
@@ -156,7 +164,7 @@ export const mockApi = {
     },
 
     get: async (id: string) => {
-      const campaign = DEMO_CAMPAIGNS.find(c => c.id === id)
+      const campaign = inMemoryCampaigns.find(c => c.id === id)
       if (!campaign) {
         return mockResponse({
           success: false,
@@ -177,35 +185,57 @@ export const mockApi = {
         participant_count: 0,
         status: 'pending',
         verified_by_admin: false,
+        owner_id: 'demo-user-current',
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       }
+      inMemoryCampaigns.push(newCampaign) // Сохраняем в память
       return mockResponse({
         success: true,
-        data: { id: newCampaign.id },
+        data: { id: newCampaign.id, ...newCampaign },
       })
     },
 
     donate: async (id: string, data: any) => {
-      const campaign = DEMO_CAMPAIGNS.find(c => c.id === id)
+      const campaign = inMemoryCampaigns.find(c => c.id === id)
       if (!campaign) {
         return mockResponse({
           success: false,
           error: { message: 'Campaign not found' },
         }, 404)
       }
+      
+      // Обновляем кампанию
+      campaign.collected_amount = (campaign.collected_amount || 0) + data.amount.value
+      campaign.participant_count = (campaign.participant_count || 0) + 1
+      campaign.updated_at = new Date().toISOString()
+      
+      // Добавляем запись в историю
+      inMemoryHistory.push({
+        id: `demo-history-campaign-${Date.now()}`,
+        type: 'campaign',
+        amount_value: data.amount.value,
+        currency: data.amount.currency || 'RUB',
+        status: 'paid',
+        campaign_id: id,
+        campaign_title: campaign.title,
+        fund_id: campaign.fund_id,
+        created_at: new Date().toISOString(),
+        paid_at: new Date().toISOString(),
+      })
+      
       return mockResponse({
         success: true,
         data: {
-          donation_id: `demo-donation-${Date.now()}`,
-          provider: 'yookassa',
-          payment_url: 'https://demo-payment.example.com',
-          expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+          donation_id: `demo-campaign-donation-${Date.now()}`,
+          status: 'paid',
+          amount: data.amount,
         },
       })
     },
 
     getReport: async (id: string) => {
-      const campaign = DEMO_CAMPAIGNS.find(c => c.id === id)
+      const campaign = inMemoryCampaigns.find(c => c.id === id)
       if (!campaign) {
         return mockResponse({
           success: false,
@@ -216,9 +246,9 @@ export const mockApi = {
         success: true,
         data: {
           campaign_id: id,
-          collected_amount: campaign.collected_amount,
+          collected_amount: campaign.collected_amount || 0,
           goal_amount: campaign.goal_amount,
-          participant_count: campaign.participant_count,
+          participant_count: campaign.participant_count || 0,
           report_url: null,
           created_at: campaign.created_at,
         },
@@ -243,7 +273,7 @@ export const mockApi = {
       from?: number
       size?: number
     }) => {
-      let partners = [...DEMO_PARTNERS]
+      let partners = [...inMemoryFunds].filter(f => f.partner_enabled)
 
       // Фильтрация по стране
       if (params?.country) {
@@ -294,10 +324,17 @@ export const mockApi = {
     },
 
     submitApplication: async (data: any) => {
+      const newApplication = {
+        id: `demo-partner-app-${Date.now()}`,
+        ...data,
+        status: 'received',
+        created_at: new Date().toISOString(),
+      }
+      inMemoryPartners.push(newApplication) // Сохраняем в память
       return mockResponse({
         success: true,
         data: {
-          application_id: `demo-app-${Date.now()}`,
+          application_id: newApplication.id,
           status: 'received',
         },
       })
@@ -312,7 +349,19 @@ export const mockApi = {
       from?: number
       size?: number
     }) => {
-      let history = [...DEMO_HISTORY]
+      let history = [...inMemoryHistory]
+      
+      // Преобразуем формат для совместимости
+      history = history.map(h => ({
+        id: h.id,
+        type: h.type,
+        date: h.created_at || h.paid_at,
+        amount: { value: h.amount_value, currency: h.currency || 'RUB' },
+        status: h.status,
+        fund_name: h.fund_name || (h.fund_id ? inMemoryFunds.find(f => f.id === h.fund_id)?.name : null),
+        campaign_title: h.campaign_title || null,
+        receipt_url: h.receipt_url || `https://demo-receipt.example.com/${h.id}`,
+      }))
 
       // Фильтрация по типу
       if (params?.type) {
@@ -354,7 +403,7 @@ export const mockApi = {
       to?: string
       verified?: boolean
     }) => {
-      let reports = [...DEMO_REPORTS]
+      let reports = [...inMemoryReports]
 
       // Фильтрация по фонду
       if (params?.fund_id) {
@@ -375,13 +424,20 @@ export const mockApi = {
       from?: string
       to?: string
     }) => {
+      // Вычисляем реальную статистику из данных
+      const totalCollected = inMemoryHistory
+        .filter(h => h.status === 'paid')
+        .reduce((sum, h) => sum + (h.amount_value || 0), 0)
+      
+      const totalDistributed = Math.floor(totalCollected * 0.85) // 85% распределено
+      
       return mockResponse({
         success: true,
         data: {
-          total_collected: 1000000,
-          total_distributed: 850000,
-          total_campaigns: DEMO_CAMPAIGNS.length,
-          total_funds: DEMO_FUNDS.length,
+          total_collected: totalCollected || 1000000,
+          total_distributed: totalDistributed || 850000,
+          total_campaigns: inMemoryCampaigns.length,
+          total_funds: inMemoryFunds.length,
           period: params?.period || 'monthly',
         },
       })
@@ -391,23 +447,69 @@ export const mockApi = {
   // Donations API
   donations: {
     init: async (data: any) => {
+      const donationId = `demo-donation-${Date.now()}`
+      
+      // В демо-режиме возвращаем donation_id для дальнейшей обработки через PaymentForm
+      // История будет добавлена после успешной оплаты через addPaymentToHistory
+      
       return mockResponse({
         success: true,
         data: {
-          donation_id: `demo-donation-${Date.now()}`,
-          provider: 'yookassa',
-          payment_url: 'https://demo-payment.example.com',
-          expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+          donation_id: donationId,
+          payment_url: null, // В демо-режиме показываем форму оплаты, а не payment_url
         },
       })
     },
+    
+    // Метод для добавления записи в историю после успешной оплаты
+    addPaymentToHistory: async (data: { 
+      fund_id?: string
+      campaign_id?: string
+      calculation_id?: string
+      plan_id?: string
+      period?: string
+      amount: { value: number; currency: string }
+      type: 'donation' | 'campaign' | 'zakat' | 'subscription'
+    }) => {
+      const fund = data.fund_id ? inMemoryFunds.find(f => f.id === data.fund_id) : null
+      const campaign = data.campaign_id ? inMemoryCampaigns.find(c => c.id === data.campaign_id) : null
+      
+      inMemoryHistory.push({
+        id: `demo-history-${data.type}-${Date.now()}`,
+        type: data.type,
+        amount_value: data.amount.value,
+        currency: data.amount.currency,
+        status: 'paid',
+        fund_id: data.fund_id || campaign?.fund_id,
+        fund_name: fund?.name || campaign?.fund_id ? inMemoryFunds.find(f => f.id === campaign?.fund_id)?.name : null,
+        campaign_id: data.campaign_id,
+        campaign_title: campaign?.title,
+        plan: data.plan_id,
+        period: data.period,
+        created_at: new Date().toISOString(),
+        paid_at: new Date().toISOString(),
+      })
+      
+      return Promise.resolve({ success: true })
+    },
 
     getStatus: async (donationId: string) => {
+      // Ищем в истории по donation_id или похожему id
+      const historyItem = inMemoryHistory.find(h => 
+        h.id === donationId || 
+        h.id.includes(donationId) ||
+        donationId.includes(h.id)
+      )
+      
       return mockResponse({
         success: true,
         data: {
-          status: 'paid',
+          status: historyItem?.status || 'paid',
           donation_id: donationId,
+          amount: historyItem ? { 
+            value: historyItem.amount_value, 
+            currency: historyItem.currency || 'RUB' 
+          } : null,
         },
       })
     },
@@ -416,22 +518,40 @@ export const mockApi = {
   // Subscriptions API
   subscriptions: {
     init: async (data: any) => {
+      const subscriptionId = `demo-sub-${Date.now()}`
+      
+      // После успешной оплаты через PaymentForm данные будут добавлены в историю
+      
       return mockResponse({
         success: true,
         data: {
-          subscription_id: `demo-sub-${Date.now()}`,
+          subscription_id: subscriptionId,
           provider: 'yookassa',
-          payment_url: 'https://demo-payment.example.com',
+          confirmation_url: null, // В демо-режиме показываем форму оплаты
         },
       })
     },
 
     list: async () => {
+      // Получаем активные подписки из истории
+      const activeSubscriptions = inMemoryHistory
+        .filter(h => h.type === 'subscription' && h.status === 'paid')
+        .map((h, index) => ({
+          id: `demo-sub-${index + 1}`,
+          plan: h.plan || 'basic',
+          period: h.period || 'P1M',
+          status: 'active',
+          next_charge_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          created_at: h.created_at,
+        }))
+        .reverse() // Новые первыми
+        .slice(0, 10) // Максимум 10
+      
       return mockResponse({
         success: true,
         data: {
-          items: [],
-          total: 0,
+          items: activeSubscriptions,
+          total: activeSubscriptions.length,
         },
       })
     },
@@ -465,12 +585,15 @@ export const mockApi = {
     },
 
     pay: async (data: any) => {
+      // После успешной оплаты через PaymentForm данные будут добавлены в историю
+      // Здесь просто возвращаем успешный ответ
+      
       return mockResponse({
         success: true,
         data: {
           donation_id: `demo-zakat-donation-${Date.now()}`,
-          provider: 'yookassa',
-          payment_url: 'https://demo-payment.example.com',
+          status: 'paid',
+          amount: data.amount,
         },
       })
     },

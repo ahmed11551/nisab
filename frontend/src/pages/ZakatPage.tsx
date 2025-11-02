@@ -3,11 +3,15 @@ import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { zakatApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import { useToast } from '../context/ToastContext'
 import ErrorMessage from '../components/ErrorMessage'
+import PaymentForm from '../components/PaymentForm'
 import './ZakatPage.css'
 
 const ZakatPage = () => {
   const { t } = useTranslation()
+  const toast = useToast()
+  const tg = useTelegramWebApp()
   const [assets, setAssets] = useState({
     cash_total: 0,
     gold_g: 0,
@@ -18,12 +22,12 @@ const ZakatPage = () => {
   })
   const [debts, setDebts] = useState(0)
   const [zakatDue, setZakatDue] = useState<number | null>(null)
+  const [showPaymentForm, setShowPaymentForm] = useState(false)
 
   const nisabValue = 64000 // Should be fetched from API
   const nisabCurrency = 'RUB'
 
   const [calculationId, setCalculationId] = useState<string | null>(null)
-  const tg = useTelegramWebApp()
 
   const calculateMutation = useMutation(
     (data: typeof assets & { debts_short_term: number }) =>
@@ -58,16 +62,21 @@ const ZakatPage = () => {
       zakatApi.pay(data),
     {
       onSuccess: (response) => {
-        if (response.data.payment_url) {
+        if (response.data?.payment_url || response.data?.data?.payment_url) {
+          const url = response.data?.payment_url || response.data?.data?.payment_url
           if (tg?.openLink) {
-            tg.openLink(response.data.payment_url)
+            tg.openLink(url)
           } else if (typeof window !== 'undefined') {
-            window.open(response.data.payment_url, '_blank')
+            window.open(url, '_blank')
           }
+        } else {
+          // В демо-режиме показываем форму оплаты
+          setShowPaymentForm(true)
         }
       },
       onError: (error: Error) => {
         console.error('Zakat payment error:', error)
+        toast.error(error.message || 'Не удалось инициализировать оплату закята')
       },
       retry: false, // Don't retry automatically to prevent stuck loading state
     }
@@ -247,6 +256,27 @@ const ZakatPage = () => {
                 </button>
               </>
             )}
+          </div>
+        )}
+
+        {/* Форма оплаты закята */}
+        {showPaymentForm && zakatDue && zakatDue > 0 && calculationId && (
+          <div className="payment-form-wrapper">
+            <PaymentForm
+              amount={zakatDue}
+              currency="RUB"
+              donationType="zakat"
+              donationData={{ calculation_id: calculationId }}
+              onSuccess={() => {
+                setShowPaymentForm(false)
+                toast.success('Закят успешно оплачен! Баракаллах! 🙏', 5000)
+                setZakatDue(null)
+                setCalculationId(null)
+              }}
+              onCancel={() => {
+                setShowPaymentForm(false)
+              }}
+            />
           </div>
         )}
 

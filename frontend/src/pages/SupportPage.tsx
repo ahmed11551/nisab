@@ -157,6 +157,8 @@ const SupportPage = () => {
           <PaymentForm
             amount={amount}
             currency="RUB"
+            donationType="donation"
+            donationData={{ fund_id: 'support-fund' }}
             onSuccess={() => {
               setShowPaymentForm(false)
               setSuccess(true)

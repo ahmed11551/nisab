@@ -5,6 +5,7 @@ import { useTelegramWebApp } from './hooks/useTelegramWebApp'
 import { ToastProvider } from './context/ToastContext'
 import Layout from './components/Layout'
 import ToastContainer from './components/ToastContainer'
+import DemoModeBanner from './components/DemoModeBanner'
 import Loading from './components/Loading'
 import './index.css'
 
@@ -57,6 +58,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <BrowserRouter>
+          <DemoModeBanner />
           <Layout>
             <Suspense fallback={<Loading message="Загрузка..." />}>
               <Routes>

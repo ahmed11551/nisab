@@ -72,7 +72,7 @@ const formatExpiry = (value: string): string => {
   return cleaned
 }
 
-const PaymentForm = ({ amount, currency = 'RUB', onSuccess, onCancel }: PaymentFormProps) => {
+const PaymentForm = ({ amount, currency = 'RUB', onSuccess, onCancel, donationType, donationData }: PaymentFormProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
@@ -136,8 +136,34 @@ const PaymentForm = ({ amount, currency = 'RUB', onSuccess, onCancel }: PaymentF
     }
 
     // Имитация успешной оплаты
-    setTimeout(() => {
+    setTimeout(async () => {
       setProcessing(false)
+      
+      // Добавляем запись в историю (если в демо-режиме)
+      if (typeof window !== 'undefined' && donationType && donationData) {
+        const { isDemoMode } = await import('../data/demoData')
+        if (isDemoMode()) {
+          const { mockApi } = await import('../services/mockApi')
+          
+          try {
+            // Добавляем в историю после успешной оплаты
+            if ('addPaymentToHistory' in (mockApi.donations as any)) {
+              await (mockApi.donations as any).addPaymentToHistory({
+                type: donationType,
+                amount: { value: amount, currency },
+                fund_id: donationData.fund_id,
+                campaign_id: donationData.campaign_id,
+                calculation_id: donationData.calculation_id,
+                plan_id: donationData.plan_id,
+                period: donationData.period,
+              })
+            }
+          } catch (e) {
+            console.warn('Could not add to history in demo mode:', e)
+          }
+        }
+      }
+      
       toast.success('Платеж успешно обработан!', 4000)
       onSuccess()
     }, 2000)

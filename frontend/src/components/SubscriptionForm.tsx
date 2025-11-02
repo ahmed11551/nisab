@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { subscriptionsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import { useToast } from '../context/ToastContext'
 import ErrorMessage from '../components/ErrorMessage'
+import PaymentForm from './PaymentForm'
 import './SubscriptionForm.css'
 
 interface SubscriptionFormData {
@@ -19,6 +22,9 @@ interface SubscriptionFormProps {
 const SubscriptionForm = ({ onSuccess, onError }: SubscriptionFormProps) => {
   const { t } = useTranslation()
   const tg = useTelegramWebApp()
+  const toast = useToast()
+  const [showPaymentForm, setShowPaymentForm] = useState(false)
+  const [subscriptionData, setSubscriptionData] = useState<{ plan_id?: string; period?: string; amount?: number } | null>(null)
 
   const { register, handleSubmit, watch } = useForm<SubscriptionFormData>({
     defaultValues: {
@@ -47,16 +53,22 @@ const SubscriptionForm = ({ onSuccess, onError }: SubscriptionFormProps) => {
       }),
     {
       onSuccess: (response) => {
-        if (response.data.confirmation_url) {
+        if (response.data?.confirmation_url || response.data?.data?.confirmation_url) {
+          const url = response.data?.confirmation_url || response.data?.data?.confirmation_url
           if (tg?.openLink) {
-            tg.openLink(response.data.confirmation_url)
+            tg.openLink(url)
           } else if (typeof window !== 'undefined') {
-            window.open(response.data.confirmation_url, '_blank')
+            window.open(url, '_blank')
           }
-          onSuccess?.(response.data.confirmation_url)
+          onSuccess?.(url)
+        } else {
+          // В демо-режиме показываем форму оплаты
+          setShowPaymentForm(true)
+          setSubscriptionData({ plan_id: data.plan_id, period: data.period, amount: currentPrice })
         }
       },
       onError: (error: Error) => {
+        toast.error(error.message || 'Не удалось создать подписку')
         onError?.(error)
       },
       retry: false, // Don't retry automatically to prevent stuck loading state
@@ -145,6 +157,31 @@ const SubscriptionForm = ({ onSuccess, onError }: SubscriptionFormProps) => {
       >
         {mutation.isLoading ? t('common.loading') : t('donate.continue')}
       </button>
+
+      {/* Форма оплаты подписки */}
+      {showPaymentForm && subscriptionData && subscriptionData.amount && subscriptionData.amount > 0 && (
+        <div className="payment-form-wrapper">
+          <PaymentForm
+            amount={subscriptionData.amount}
+            currency="RUB"
+            donationType="subscription"
+            donationData={{ 
+              plan_id: subscriptionData.plan_id, 
+              period: subscriptionData.period 
+            }}
+            onSuccess={() => {
+              setShowPaymentForm(false)
+              setSubscriptionData(null)
+              toast.success('Подписка успешно оформлена! Спасибо! 🙏', 5000)
+              onSuccess?.('subscription_success')
+            }}
+            onCancel={() => {
+              setShowPaymentForm(false)
+              setSubscriptionData(null)
+            }}
+          />
+        </div>
+      )}
     </form>
   )
 }
