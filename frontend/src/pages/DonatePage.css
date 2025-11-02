@@ -56,22 +56,53 @@
 .fund-card {
   display: flex;
   gap: 16px;
-  padding: 16px;
-  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
-  border-radius: 12px;
+  padding: 20px;
+  background: var(--bg-secondary);
+  background-image: var(--gradient-card);
+  border: 2px solid rgba(74, 158, 255, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
-  transition: all 0.2s;
-  border: 2px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.fund-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .fund-card:hover {
-  border-color: var(--tg-theme-button-color, #2481cc);
-  transform: translateY(-2px);
+  border-color: rgba(74, 158, 255, 0.4);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(74, 158, 255, 0.3);
+}
+
+.fund-card:hover::before {
+  opacity: 0.05;
 }
 
 .fund-card.selected {
-  border-color: var(--tg-theme-button-color, #2481cc);
-  background-color: var(--tg-theme-bg-color, #ffffff);
+  border-color: var(--accent-blue);
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-button);
+}
+
+.fund-card.selected::before {
+  opacity: 0.1;
+}
+
+.fund-card:active {
+  transform: translateY(-2px) scale(1.01);
 }
 
 .fund-logo {

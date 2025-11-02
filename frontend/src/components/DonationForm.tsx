@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { donationsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import { useToast } from '../context/ToastContext'
 import ErrorMessage from '../components/ErrorMessage'
 import PaymentForm from './PaymentForm'
 import './DonationForm.css'
@@ -23,6 +24,7 @@ interface DonationFormProps {
 const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
   const { t } = useTranslation()
   const tg = useTelegramWebApp()
+  const toast = useToast()
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   const [donationId, setDonationId] = useState<string | null>(null)
@@ -64,10 +66,15 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
           } else if (typeof window !== 'undefined') {
             window.open(url, '_blank')
           }
+          toast.success('Переход к оплате')
           onSuccess?.(url)
+        } else {
+          toast.error('Не удалось получить данные для оплаты')
         }
       },
       onError: (error: Error) => {
+        const errorMessage = error.message || 'Не удалось создать пожертвование'
+        toast.error(errorMessage)
         onError?.(error)
       },
       retry: false, // Don't retry automatically to prevent stuck loading state
@@ -157,10 +164,8 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
             currency="RUB"
             onSuccess={() => {
               setShowPaymentForm(false)
+              toast.success('Платеж успешно обработан! Спасибо за ваше пожертвование 🙏', 5000)
               onSuccess?.('payment_success')
-              if (tg?.showAlert) {
-                tg.showAlert('Платеж успешно обработан! Спасибо за ваше пожертвование 🙏')
-              }
             }}
             onCancel={() => {
               setShowPaymentForm(false)

@@ -3,6 +3,7 @@ import { useMutation } from 'react-query'
 import { useState } from 'react'
 import { campaignsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import { useToast } from '../context/ToastContext'
 import ErrorMessage from '../components/ErrorMessage'
 import './CampaignForm.css'
 
@@ -32,6 +33,7 @@ const categories = [
 
 const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
   const tg = useTelegramWebApp()
+  const toast = useToast()
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
 
@@ -56,21 +58,13 @@ const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
       }),
     {
       onSuccess: (response) => {
-        if (tg?.showAlert) {
-          tg.showAlert('Кампания создана! Она будет опубликована после модерации.')
-        } else if (typeof window !== 'undefined') {
-          window.alert('Кампания создана! Она будет опубликована после модерации.')
-        }
-        onSuccess?.(response.data.id)
+        toast.success('Кампания создана! Она будет опубликована после модерации.', 5000)
+        onSuccess?.(response.data?.id || response.data?.data?.id)
       },
       onError: (error: Error) => {
         console.error('Campaign creation error:', error)
         const errorMessage = error.message || 'Не удалось создать кампанию. Проверьте введенные данные.'
-        if (tg?.showAlert) {
-          tg.showAlert(errorMessage)
-        } else if (typeof window !== 'undefined') {
-          window.alert(errorMessage)
-        }
+        toast.error(errorMessage)
         onError?.(error)
       },
       retry: false, // Don't retry automatically to prevent stuck loading state
@@ -79,11 +73,7 @@ const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
 
   const onSubmit = (data: CampaignFormData) => {
     if (!data.goal_amount || data.goal_amount <= 0) {
-      if (tg?.showAlert) {
-        tg.showAlert('Укажите сумму цели больше 0')
-      } else if (typeof window !== 'undefined') {
-        window.alert('Укажите сумму цели больше 0')
-      }
+      toast.warning('Укажите сумму цели больше 0')
       return
     }
     

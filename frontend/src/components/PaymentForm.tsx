@@ -74,6 +74,7 @@ const formatExpiry = (value: string): string => {
 
 const PaymentForm = ({ amount, currency = 'RUB', onSuccess, onCancel }: PaymentFormProps) => {
   const { t } = useTranslation()
+  const toast = useToast()
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
   const [selectedBank, setSelectedBank] = useState<string>('')
   const [processing, setProcessing] = useState(false)
@@ -117,20 +118,27 @@ const PaymentForm = ({ amount, currency = 'RUB', onSuccess, onCancel }: PaymentF
       const cleanedCardNumber = data.cardNumber.replace(/\s/g, '')
       if (!validateCardNumber(cleanedCardNumber)) {
         setProcessing(false)
-        alert('Неверный номер карты')
+        toast.error('Неверный номер карты. Проверьте данные.')
         return
       }
       
       if (data.cardCvv.length !== 3) {
         setProcessing(false)
-        alert('CVV должен содержать 3 цифры')
+        toast.error('CVV должен содержать 3 цифры')
         return
       }
+    }
+
+    if (paymentMethod === 'sbp' && !selectedBank) {
+      setProcessing(false)
+      toast.warning('Выберите банк для оплаты через СБП')
+      return
     }
 
     // Имитация успешной оплаты
     setTimeout(() => {
       setProcessing(false)
+      toast.success('Платеж успешно обработан!', 4000)
       onSuccess()
     }, 2000)
   }

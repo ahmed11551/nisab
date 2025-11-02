@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { donationsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import { useToast } from '../context/ToastContext'
 import ErrorMessage from '../components/ErrorMessage'
 import PaymentForm from '../components/PaymentForm'
 import './SupportPage.css'
@@ -10,6 +11,7 @@ import './SupportPage.css'
 const SupportPage = () => {
   const { t } = useTranslation()
   const tg = useTelegramWebApp()
+  const toast = useToast()
   const [amount, setAmount] = useState<number | null>(null)
   const [customAmount, setCustomAmount] = useState<string>('')
   const [success, setSuccess] = useState(false)
@@ -39,17 +41,16 @@ const SupportPage = () => {
           } else if (typeof window !== 'undefined') {
             window.open(url, '_blank')
           }
+          toast.success('Переход к оплате')
           setSuccess(true)
+        } else {
+          toast.error('Не удалось получить данные для оплаты')
         }
       },
       onError: (error: Error) => {
         console.error('Support donation error:', error)
-        const errorMessage = error.message || 'Не удалось подключиться к серверу. Проверьте, что сервер запущен на порту 3000.'
-        if (tg?.showAlert) {
-          tg.showAlert(errorMessage)
-        } else if (typeof window !== 'undefined') {
-          window.alert(errorMessage)
-        }
+        const errorMessage = error.message || 'Не удалось создать пожертвование. Попробуйте позже.'
+        toast.error(errorMessage)
       },
       retry: false, // Don't retry automatically to prevent stuck loading state
     }
@@ -159,9 +160,7 @@ const SupportPage = () => {
             onSuccess={() => {
               setShowPaymentForm(false)
               setSuccess(true)
-              if (tg?.showAlert) {
-                tg.showAlert('Платеж успешно обработан! Спасибо за вашу поддержку 🙏')
-              }
+              toast.success('Платеж успешно обработан! Спасибо за вашу поддержку 🙏', 5000)
             }}
             onCancel={() => {
               setShowPaymentForm(false)

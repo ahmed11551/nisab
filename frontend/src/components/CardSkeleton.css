@@ -1,0 +1,73 @@
+.card-skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.card-skeleton {
+  background: var(--bg-secondary);
+  background-image: var(--gradient-card);
+  border: 1px solid rgba(74, 158, 255, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
+}
+
+.card-skeleton-fund {
+  padding: 20px;
+}
+
+.card-skeleton-campaign {
+  padding: 0;
+}
+
+.card-skeleton-partner {
+  padding: 20px;
+}
+
+.card-skeleton-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-skeleton-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.card-skeleton-title-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-skeleton-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-skeleton-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

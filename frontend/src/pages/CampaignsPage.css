@@ -59,39 +59,80 @@
 .campaign-card {
   display: flex;
   flex-direction: column;
-  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
-  border-radius: 12px;
+  background: var(--bg-secondary);
+  background-image: var(--gradient-card);
+  border: 1px solid rgba(74, 158, 255, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
   text-decoration: none;
-  color: var(--tg-theme-text-color, #000000);
-  transition: transform 0.2s, box-shadow 0.2s;
+  color: var(--text-primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+}
+
+.campaign-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .campaign-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 6px 20px rgba(74, 158, 255, 0.3);
+  border-color: rgba(74, 158, 255, 0.3);
+}
+
+.campaign-card:hover::before {
+  opacity: 0.05;
+}
+
+.campaign-card:active {
+  transform: translateY(-2px) scale(1);
 }
 
 .campaign-image {
   width: 100%;
   height: 200px;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.campaign-card:hover .campaign-image {
+  transform: scale(1.05);
 }
 
 .campaign-info {
-  padding: 16px;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .campaign-info h3 {
-  margin: 0 0 8px 0;
-  font-size: 18px;
-  font-weight: 600;
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
 }
 
 .campaign-description {
   margin: 0 0 16px 0;
   font-size: 14px;
-  color: var(--tg-theme-hint-color, #999999);
+  color: var(--text-secondary);
+  line-height: 1.6;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -104,24 +145,28 @@
 
 .progress-bar {
   width: 100%;
-  height: 8px;
-  background-color: var(--tg-theme-bg-color, #ffffff);
-  border-radius: 4px;
+  height: 10px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
   overflow: hidden;
   margin-bottom: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .progress-fill {
   height: 100%;
-  background-color: var(--tg-theme-button-color, #2481cc);
-  transition: width 0.3s;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-sm);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
 }
 
 .progress-text {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-  color: var(--tg-theme-hint-color, #999999);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .campaign-stats {

@@ -6,6 +6,7 @@ import DonationForm from '../components/DonationForm'
 import Loading from '../components/Loading'
 import EmptyState from '../components/EmptyState'
 import ErrorMessage from '../components/ErrorMessage'
+import CardSkeleton from '../components/CardSkeleton'
 import './DonatePage.css'
 
 const DonatePage = () => {
@@ -105,7 +106,7 @@ const DonatePage = () => {
 
       {/* Funds List */}
       {isLoading ? (
-        <Loading message="Загрузка фондов..." />
+        <CardSkeleton variant="fund" count={5} />
       ) : error ? (
         <ErrorMessage
           title="Ошибка загрузки фондов"

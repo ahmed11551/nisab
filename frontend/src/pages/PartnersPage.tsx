@@ -6,6 +6,7 @@ import { partnersApi } from '../services/api'
 import Loading from '../components/Loading'
 import EmptyState from '../components/EmptyState'
 import ErrorMessage from '../components/ErrorMessage'
+import CardSkeleton from '../components/CardSkeleton'
 import './PartnersPage.css'
 
 const PartnersPage = () => {
@@ -70,7 +71,7 @@ const PartnersPage = () => {
       </div>
 
       {isLoading ? (
-        <Loading message="Загрузка фондов-партнёров..." />
+        <CardSkeleton variant="partner" count={5} />
       ) : fundsError || countriesError ? (
         <ErrorMessage
           title="Ошибка загрузки данных"

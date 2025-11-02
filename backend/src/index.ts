@@ -9,6 +9,7 @@ import { initializeDatabase } from './database'
 import { routes } from './routes'
 import { syncElasticsearchOnStart } from './utils/syncElasticsearch'
 import { syncEReplikaOnStart } from './utils/syncEReplika'
+import { rateLimiters } from './middleware/rateLimit'
 
 dotenv.config()
 
@@ -21,16 +22,20 @@ app.use(cors({
   origin: config.corsOrigin,
   credentials: true,
 }))
+
+// Trust proxy для правильного определения IP адреса (если используется за прокси)
+app.set('trust proxy', 1)
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Health check
+// Health check (без rate limiting)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-// API routes
-app.use('/api/v1', routes)
+// API routes с rate limiting (50 req/min по ТЗ)
+app.use('/api/v1', rateLimiters.api, routes)
 
 // Error handling
 app.use(errorHandler)

@@ -5,6 +5,7 @@ import { campaignsApi } from '../services/api'
 import Loading from '../components/Loading'
 import EmptyState from '../components/EmptyState'
 import ErrorMessage from '../components/ErrorMessage'
+import CardSkeleton from '../components/CardSkeleton'
 import './CampaignsPage.css'
 
 const CampaignsPage = () => {
@@ -93,7 +94,7 @@ const CampaignsPage = () => {
       </div>
 
       {isLoading ? (
-        <Loading message="Загрузка кампаний..." />
+        <CardSkeleton variant="campaign" count={5} />
       ) : error ? (
         <ErrorMessage
           title="Ошибка загрузки кампаний"
