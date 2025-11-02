@@ -1,6 +1,17 @@
 import axios, { AxiosInstance, AxiosError } from 'axios'
+import { isDemoMode } from '../data/demoData'
+import { mockApi } from './mockApi'
 
 const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000'
+
+// Динамически определяем демо-режим (может измениться при ошибках сети)
+const getDemoMode = () => isDemoMode()
+
+// Показываем предупреждение о демо-режиме
+if (typeof window !== 'undefined' && getDemoMode()) {
+  console.log('%c📦 ДЕМО-РЕЖИМ АКТИВЕН', 'color: #4a9eff; font-weight: bold; font-size: 16px')
+  console.log('Приложение работает с демо-данными.')
+}
 
 class ApiClient {
   private client: AxiosInstance
@@ -51,8 +62,40 @@ class ApiClient {
         } else if (error.request) {
           // Request was made but no response received
           console.error('Network error: No response from server')
+          
+          // Автоматически активируем демо-режим при сетевых ошибках
+          if (!DEMO_MODE) {
+            const { enableDemoMode } = await import('../data/demoData')
+            enableDemoMode()
+            // Повторяем запрос с демо-данными
+            if (error.config) {
+              const { mockApi } = await import('./mockApi')
+              const url = error.config.url || ''
+              const method = error.config.method?.toLowerCase() || 'get'
+              
+              // Пробуем найти соответствующий мок
+              try {
+                if (url.includes('/funds') && method === 'get') {
+                  return mockApi.funds.list(error.config.params)
+                } else if (url.includes('/campaigns') && method === 'get') {
+                  return mockApi.campaigns.list(error.config.params)
+                } else if (url.includes('/partners/funds') && method === 'get') {
+                  return mockApi.partners.getFunds(error.config.params)
+                } else if (url.includes('/partners/countries') && method === 'get') {
+                  return mockApi.partners.getCountries()
+                } else if (url.includes('/me/history') && method === 'get') {
+                  return mockApi.history.get(error.config.params)
+                } else if (url.includes('/reports/summary') && method === 'get') {
+                  return mockApi.reports.getSummary(error.config.params)
+                }
+              } catch (mockError) {
+                console.warn('Could not use mock API:', mockError)
+              }
+            }
+          }
+          
           // Create a more user-friendly error
-          const networkError = new Error('Не удалось подключиться к серверу. Проверьте, что сервер запущен на http://localhost:3000')
+          const networkError = new Error('Не удалось подключиться к серверу. Используется демо-режим.')
           networkError.name = 'NetworkError'
           return Promise.reject(networkError)
         } else {
@@ -89,21 +132,45 @@ export const donationsApi = {
     purpose?: string
     amount: { value: number; currency: string }
     payment_channel?: 'auto' | 'yookassa' | 'cloudpayments'
-  }) => apiClient.post('/donations/init', data),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.donations.init(data)
+    }
+    return apiClient.post('/donations/init', data)
+  },
 
-  getStatus: (donationId: string) => apiClient.get(`/donations/${donationId}/status`),
+  getStatus: (donationId: string) => {
+    if (getDemoMode()) {
+      return mockApi.donations.getStatus(donationId)
+    }
+    return apiClient.get(`/donations/${donationId}/status`)
+  },
 }
 
 export const subscriptionsApi = {
   init: (data: {
     plan_id: 'basic' | 'pro' | 'premium'
     period: 'P1M' | 'P3M' | 'P6M' | 'P12M'
-  }) => apiClient.post('/subscriptions/init', data),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.subscriptions.init(data)
+    }
+    return apiClient.post('/subscriptions/init', data)
+  },
 
-  update: (id: string, action: 'pause' | 'resume' | 'cancel') =>
-    apiClient.patch(`/subscriptions/${id}`, { action }),
+  update: (id: string, action: 'pause' | 'resume' | 'cancel') => {
+    if (getDemoMode()) {
+      return Promise.resolve({ data: { success: true } })
+    }
+    return apiClient.patch(`/subscriptions/${id}`, { action })
+  },
 
-  list: () => apiClient.get('/me/subscriptions'),
+  list: () => {
+    if (getDemoMode()) {
+      return mockApi.subscriptions.list()
+    }
+    return apiClient.get('/me/subscriptions')
+  },
 }
 
 export const zakatApi = {
@@ -120,12 +187,22 @@ export const zakatApi = {
     nisab_currency: string
     nisab_value: number
     rate_percent?: number
-  }) => apiClient.post('/zakat/calc', data),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.zakat.calculate(data)
+    }
+    return apiClient.post('/zakat/calc', data)
+  },
 
   pay: (data: {
     calculation_id: string
     amount: { value: number; currency: string }
-  }) => apiClient.post('/zakat/pay', data),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.zakat.pay(data)
+    }
+    return apiClient.post('/zakat/pay', data)
+  },
 }
 
 export const fundsApi = {
@@ -135,13 +212,28 @@ export const fundsApi = {
     query?: string
     from?: number
     size?: number
-  }) => apiClient.get('/funds', { params }),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.funds.list(params)
+    }
+    return apiClient.get('/funds', { params })
+  },
 
-  get: (id: string) => apiClient.get(`/funds/${id}`),
+  get: (id: string) => {
+    if (getDemoMode()) {
+      return mockApi.funds.get(id)
+    }
+    return apiClient.get(`/funds/${id}`)
+  },
 }
 
 export const partnersApi = {
-  getCountries: () => apiClient.get('/partners/countries'),
+  getCountries: () => {
+    if (getDemoMode()) {
+      return mockApi.partners.getCountries()
+    }
+    return apiClient.get('/partners/countries')
+  },
 
   getFunds: (params?: {
     country?: string
@@ -149,7 +241,12 @@ export const partnersApi = {
     search?: string
     from?: number
     size?: number
-  }) => apiClient.get('/partners/funds', { params }),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.partners.getFunds(params)
+    }
+    return apiClient.get('/partners/funds', { params })
+  },
 
   submitApplication: (data: {
     org_name: string
@@ -161,7 +258,12 @@ export const partnersApi = {
     phone?: string
     about?: string
     consents: { privacy: boolean; terms: boolean }
-  }) => apiClient.post('/partners/applications', data),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.partners.submitApplication(data)
+    }
+    return apiClient.post('/partners/applications', data)
+  },
 }
 
 export const campaignsApi = {
@@ -171,9 +273,19 @@ export const campaignsApi = {
     category?: string
     from?: number
     size?: number
-  }) => apiClient.get('/campaigns', { params }),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.campaigns.list(params)
+    }
+    return apiClient.get('/campaigns', { params })
+  },
 
-  get: (id: string) => apiClient.get(`/campaigns/${id}`),
+  get: (id: string) => {
+    if (getDemoMode()) {
+      return mockApi.campaigns.get(id)
+    }
+    return apiClient.get(`/campaigns/${id}`)
+  },
 
   create: (data: {
     title: string
@@ -184,18 +296,37 @@ export const campaignsApi = {
     fund_id?: string
     end_date?: string
     image_url?: string
-  }) => apiClient.post('/campaigns', data),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.campaigns.create(data)
+    }
+    return apiClient.post('/campaigns', data)
+  },
 
   donate: (id: string, data: {
     amount: { value: number; currency: string }
     payment_channel?: 'auto' | 'yookassa' | 'cloudpayments'
     card_bin?: string
-  }) => apiClient.post(`/campaigns/${id}/donate`, data),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.campaigns.donate(id, data)
+    }
+    return apiClient.post(`/campaigns/${id}/donate`, data)
+  },
 
-  getReport: (id: string) => apiClient.get(`/campaigns/${id}/report`),
+  getReport: (id: string) => {
+    if (getDemoMode()) {
+      return mockApi.campaigns.getReport(id)
+    }
+    return apiClient.get(`/campaigns/${id}/report`)
+  },
 
-  moderate: (id: string, action: 'approve' | 'reject') =>
-    apiClient.patch(`/campaigns/${id}/status`, { action }),
+  moderate: (id: string, action: 'approve' | 'reject') => {
+    if (getDemoMode()) {
+      return Promise.resolve({ data: { success: true } })
+    }
+    return apiClient.patch(`/campaigns/${id}/status`, { action })
+  },
 }
 
 export const reportsApi = {
@@ -204,15 +335,31 @@ export const reportsApi = {
     from?: string
     to?: string
     verified?: boolean
-  }) => apiClient.get('/reports/funds', { params }),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.reports.getFundReports(params)
+    }
+    return apiClient.get('/reports/funds', { params })
+  },
 
-  getReport: (id: string) => apiClient.get(`/reports/${id}`),
+  getReport: async (id: string) => {
+    if (getDemoMode()) {
+      const { DEMO_REPORTS } = await import('../data/demoData')
+      return Promise.resolve({ data: { success: true, data: DEMO_REPORTS[0] } })
+    }
+    return apiClient.get(`/reports/${id}`)
+  },
 
   getSummary: (params?: {
     period?: 'monthly' | 'quarterly' | 'yearly'
     from?: string
     to?: string
-  }) => apiClient.get('/reports/summary', { params }),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.reports.getSummary(params)
+    }
+    return apiClient.get('/reports/summary', { params })
+  },
 }
 
 export const historyApi = {
@@ -221,9 +368,19 @@ export const historyApi = {
     period?: string
     from?: number
     size?: number
-  }) => apiClient.get('/me/history', { params }),
+  }) => {
+    if (getDemoMode()) {
+      return mockApi.history.get(params)
+    }
+    return apiClient.get('/me/history', { params })
+  },
 
-  getReceipt: (id: string) => apiClient.get(`/me/receipts/${id}.pdf`, { responseType: 'blob' }),
+  getReceipt: (id: string) => {
+    if (getDemoMode()) {
+      return Promise.resolve({ data: new Blob(['Demo receipt'], { type: 'application/pdf' }) })
+    }
+    return apiClient.get(`/me/receipts/${id}.pdf`, { responseType: 'blob' })
+  },
 }
 
 export default apiClient

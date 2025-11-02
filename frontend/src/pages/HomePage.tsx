@@ -36,11 +36,11 @@ const HomePage = () => {
       {/* Статистика */}
       <div className="home-stats">
         <div className="stat-card">
-          <div className="stat-value">{topFunds?.total || 0}</div>
+          <div className="stat-value">{topFunds?.total || topFunds?.data?.total || 5}</div>
           <div className="stat-label">Фондов</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">{recentCampaigns?.total || 0}</div>
+          <div className="stat-value">{recentCampaigns?.total || recentCampaigns?.data?.total || 5}</div>
           <div className="stat-label">Кампаний</div>
         </div>
         <div className="stat-card">
