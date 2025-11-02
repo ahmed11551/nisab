@@ -51,7 +51,7 @@ const HomePage = () => {
 
       <div className="home-actions">
         <Link to="/donate" className="action-card primary">
-          <span className="action-icon">💰</span>
+          <span className="action-icon">💵</span>
           <span className="action-title">{t('nav.donate')}</span>
           <span className="action-description">Сделать пожертвование</span>
         </Link>
@@ -84,6 +84,12 @@ const HomePage = () => {
           <span className="action-icon">🤝</span>
           <span className="action-title">{t('nav.partners')}</span>
           <span className="action-description">Фонды-партнёры</span>
+        </Link>
+
+        <Link to="/history" className="action-card">
+          <span className="action-icon">📜</span>
+          <span className="action-title">{t('nav.history')}</span>
+          <span className="action-description">История пожертвований</span>
         </Link>
       </div>
     </div>

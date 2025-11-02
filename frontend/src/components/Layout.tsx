@@ -12,29 +12,32 @@ const Layout = ({ children }: LayoutProps) => {
   const { t } = useTranslation()
 
   const tabs = [
-    { path: '/donate', label: t('nav.donate'), icon: '💰' },
-    { path: '/support', label: t('nav.support'), icon: '❤️' },
-    { path: '/campaigns', label: t('nav.campaigns'), icon: '🎯' },
-    { path: '/subscription', label: t('nav.subscription'), icon: '📅' },
-    { path: '/zakat', label: t('nav.zakat'), icon: '📊' },
-    { path: '/history', label: t('nav.history'), icon: '📜' },
-    { path: '/partners', label: t('nav.partners'), icon: '🤝' },
+    { path: '/donate', label: t('nav.donate'), icon: '💵', shortLabel: 'Донат' },
+    { path: '/support', label: t('nav.support'), icon: '❤️', shortLabel: 'Поддержка' },
+    { path: '/campaigns', label: t('nav.campaigns'), icon: '🎯', shortLabel: 'Кампании' },
+    { path: '/subscription', label: t('nav.subscription'), icon: '📅', shortLabel: 'Подписка' },
+    { path: '/zakat', label: t('nav.zakat'), icon: '📊', shortLabel: 'Закят' },
+    { path: '/history', label: t('nav.history'), icon: '📜', shortLabel: 'История' },
+    { path: '/partners', label: t('nav.partners'), icon: '🤝', shortLabel: 'Партнёры' },
   ]
 
   return (
     <div className="layout">
       <main className="layout-main">{children}</main>
       <nav className="layout-nav">
-        {tabs.map((tab) => (
-          <Link
-            key={tab.path}
-            to={tab.path}
-            className={`nav-item ${location.pathname.startsWith(tab.path) ? 'active' : ''}`}
-          >
-            <span className="nav-icon">{tab.icon}</span>
-            <span className="nav-label">{tab.label}</span>
-          </Link>
-        ))}
+        <div className="nav-scroll">
+          {tabs.map((tab) => (
+            <Link
+              key={tab.path}
+              to={tab.path}
+              className={`nav-item ${location.pathname.startsWith(tab.path) ? 'active' : ''}`}
+              title={tab.label}
+            >
+              <span className="nav-icon">{tab.icon}</span>
+              <span className="nav-label">{tab.shortLabel}</span>
+            </Link>
+          ))}
+        </div>
       </nav>
     </div>
   )

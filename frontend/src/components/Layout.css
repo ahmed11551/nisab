@@ -2,7 +2,13 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-bottom: 70px; /* Space for bottom nav */
+  padding-bottom: 65px; /* Space for bottom nav */
+}
+
+@media (max-width: 768px) {
+  .layout {
+    padding-bottom: 60px; /* Smaller nav on mobile */
+  }
 }
 
 .layout-main {
@@ -17,17 +23,34 @@
   bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
   background: var(--bg-secondary);
   background: linear-gradient(180deg, rgba(37, 40, 54, 0.95) 0%, rgba(29, 33, 45, 0.98) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid rgba(74, 158, 255, 0.1);
-  padding: 12px 8px;
   z-index: 1000;
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5), 0 -2px 8px rgba(0, 0, 0, 0.3);
+  padding: 8px 0;
+}
+
+.nav-scroll {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 8px;
+  gap: 4px;
+}
+
+.nav-scroll::-webkit-scrollbar {
+  display: none; /* Скрываем скроллбар на WebKit */
+}
+
+.nav-scroll {
+  -ms-overflow-style: none; /* Скрываем скроллбар на IE/Edge */
+  scrollbar-width: none; /* Скрываем скроллбар на Firefox */
 }
 
 .nav-item {
@@ -37,10 +60,12 @@
   justify-content: center;
   text-decoration: none;
   color: var(--text-hint);
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: var(--radius-md);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-width: 60px;
+  min-width: 52px;
+  max-width: 52px;
+  flex-shrink: 0;
   position: relative;
 }
 
@@ -73,32 +98,50 @@
 }
 
 .nav-icon {
-  font-size: 22px;
-  margin-bottom: 4px;
+  font-size: 20px;
+  margin-bottom: 2px;
   position: relative;
   z-index: 1;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  line-height: 1;
 }
 
 .nav-label {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   position: relative;
   z-index: 1;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 @media (max-width: 768px) {
   .nav-label {
-    font-size: 9px;
+    font-size: 8px;
   }
   
   .nav-icon {
-    font-size: 20px;
+    font-size: 18px;
+  }
+  
+  .nav-item {
+    min-width: 48px;
+    max-width: 48px;
+    padding: 6px 8px;
   }
   
   .layout-nav {
-    padding: 10px 4px;
+    padding: 6px 0;
+  }
+  
+  .nav-scroll {
+    padding: 0 4px;
+    gap: 2px;
   }
 }
 
