@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { historyApi, reportsApi } from '../services/api'
+import Loading from '../components/Loading'
+import EmptyState from '../components/EmptyState'
+import ErrorMessage from '../components/ErrorMessage'
 import './HistoryPage.css'
 
 const HistoryPage = () => {
-  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<'history' | 'reports'>('history')
   const [filters, setFilters] = useState({
     type: '' as 'donation' | 'subscription' | 'zakat' | '',
@@ -14,7 +15,7 @@ const HistoryPage = () => {
     to: '',
   })
 
-  const { data: history, isLoading: historyLoading } = useQuery(
+  const { data: history, isLoading: historyLoading, error: historyError, refetch: refetchHistory } = useQuery(
     ['history', filters],
     () =>
       historyApi
@@ -23,13 +24,27 @@ const HistoryPage = () => {
           period: filters.period || undefined,
         })
         .then((res) => res.data),
-    { enabled: activeTab === 'history' }
+    {
+      enabled: activeTab === 'history',
+      retry: 2,
+      refetchOnWindowFocus: false,
+      onError: (err: any) => {
+        console.error('Failed to load history:', err)
+      },
+    }
   )
 
-  const { data: reports, isLoading: reportsLoading } = useQuery(
+  const { data: reports, isLoading: reportsLoading, error: reportsError, refetch: refetchReports } = useQuery(
     'fund-reports',
     () => reportsApi.getFundReports().then((res) => res.data),
-    { enabled: activeTab === 'reports' }
+    {
+      enabled: activeTab === 'reports',
+      retry: 2,
+      refetchOnWindowFocus: false,
+      onError: (err: any) => {
+        console.error('Failed to load reports:', err)
+      },
+    }
   )
 
   return (
@@ -83,11 +98,22 @@ const HistoryPage = () => {
 
           {/* History List */}
           {historyLoading ? (
-            <div className="loading">{t('common.loading')}</div>
+            <Loading message="Загрузка истории..." />
+          ) : historyError ? (
+            <ErrorMessage
+              title="Ошибка загрузки истории"
+              message={historyError instanceof Error ? historyError.message : 'Не удалось загрузить историю транзакций'}
+              onRetry={() => refetchHistory()}
+            />
+          ) : !history?.items || history.items.length === 0 ? (
+            <EmptyState
+              icon="📜"
+              title="История пуста"
+              description="У вас пока нет транзакций. Сделайте первое пожертвование!"
+            />
           ) : (
             <div className="history-list">
-              {history?.items?.length > 0 ? (
-                history.items.map((item: any) => (
+              {history.items.map((item: any) => (
                   <div key={item.id} className="history-item">
                     <div className="history-item-header">
                       <div>
@@ -126,12 +152,7 @@ const HistoryPage = () => {
                       )}
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="empty-state">
-                  <p>Нет записей в истории</p>
-                </div>
-              )}
+                ))}
             </div>
           )}
         </>
@@ -141,11 +162,22 @@ const HistoryPage = () => {
       {activeTab === 'reports' && (
         <>
           {reportsLoading ? (
-            <div className="loading">{t('common.loading')}</div>
+            <Loading message="Загрузка отчётов..." />
+          ) : reportsError ? (
+            <ErrorMessage
+              title="Ошибка загрузки отчётов"
+              message={reportsError instanceof Error ? reportsError.message : 'Не удалось загрузить отчёты фондов'}
+              onRetry={() => refetchReports()}
+            />
+          ) : !reports?.items || reports.items.length === 0 ? (
+            <EmptyState
+              icon="📊"
+              title="Отчёты недоступны"
+              description="В данный момент нет доступных отчётов фондов"
+            />
           ) : (
             <div className="reports-list">
-              {reports?.items?.length > 0 ? (
-                reports.items.map((report: any) => (
+              {reports.items.map((report: any) => (
                   <div key={report.id} className="report-card">
                     <div className="report-header">
                       <h3>{report.fund?.name || 'Фонд'}</h3>
@@ -178,12 +210,7 @@ const HistoryPage = () => {
                       </a>
                     )}
                   </div>
-                ))
-              ) : (
-                <div className="empty-state">
-                  <p>Нет доступных отчётов</p>
-                </div>
-              )}
+                ))}
             </div>
           )}
         </>

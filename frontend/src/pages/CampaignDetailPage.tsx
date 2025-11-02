@@ -1,24 +1,43 @@
-import { useParams, Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { campaignsApi } from '../services/api'
 import CampaignDonateForm from '../components/CampaignDonateForm'
+import Loading from '../components/Loading'
+import ErrorMessage from '../components/ErrorMessage'
 import './CampaignDetailPage.css'
 
 const CampaignDetailPage = () => {
   const { id } = useParams<{ id: string }>()
-  const { t } = useTranslation()
 
-  const { data: campaign, isLoading } = useQuery(
+  const { data: campaign, isLoading, error, refetch } = useQuery(
     ['campaign', id],
     () => campaignsApi.get(id!).then((res) => res.data),
-    { enabled: !!id }
+    {
+      enabled: !!id,
+      retry: 2,
+      refetchOnWindowFocus: false,
+      onError: (err: any) => {
+        console.error('Failed to load campaign:', err)
+      },
+    }
   )
 
   if (isLoading) {
     return (
       <div className="campaign-detail-page">
-        <div className="loading">{t('common.loading')}</div>
+        <Loading message="Загрузка кампании..." />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="campaign-detail-page">
+        <ErrorMessage
+          title="Ошибка загрузки кампании"
+          message={error instanceof Error ? error.message : 'Не удалось загрузить данные кампании'}
+          onRetry={() => refetch()}
+        />
       </div>
     )
   }
@@ -26,7 +45,10 @@ const CampaignDetailPage = () => {
   if (!campaign) {
     return (
       <div className="campaign-detail-page">
-        <div className="error">Кампания не найдена</div>
+        <ErrorMessage
+          title="Кампания не найдена"
+          message="Запрашиваемая кампания не существует или была удалена"
+        />
       </div>
     )
   }

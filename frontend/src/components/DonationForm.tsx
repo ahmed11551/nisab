@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { donationsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import ErrorMessage from '../components/ErrorMessage'
 import './DonationForm.css'
 
 interface DonationFormData {
@@ -44,8 +45,12 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
       }),
     {
       onSuccess: (response) => {
-        if (response.data.payment_url && tg) {
-          tg.openLink(response.data.payment_url)
+        if (response.data.payment_url) {
+          if (tg?.openLink) {
+            tg.openLink(response.data.payment_url)
+          } else if (typeof window !== 'undefined') {
+            window.open(response.data.payment_url, '_blank')
+          }
           onSuccess?.(response.data.payment_url)
         }
       },
@@ -107,6 +112,18 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
 
       <input type="hidden" {...register('fund_id')} value={fundId} />
       <input type="hidden" {...register('purpose')} />
+
+      {mutation.error && (
+        <ErrorMessage
+          title="Ошибка при создании пожертвования"
+          message={
+            mutation.error instanceof Error
+              ? mutation.error.message
+              : 'Не удалось создать пожертвование. Попробуйте позже.'
+          }
+          onRetry={() => mutation.reset()}
+        />
+      )}
 
       <button
         type="submit"

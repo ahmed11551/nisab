@@ -34,12 +34,6 @@ const SubscriptionPage = () => {
     },
   ]
 
-  const periods = [
-    { value: 'P1M', label: '1 месяц', price: { rub: 290, usd: 3 } },
-    { value: 'P3M', label: '3 месяца', price: { rub: 870, usd: 9 } },
-    { value: 'P6M', label: '6 месяцев', price: { rub: 1160, usd: 9 }, bonus: '+2 мес' },
-    { value: 'P12M', label: '12 месяцев', price: { rub: 2610, usd: 27 }, bonus: '+3 мес' },
-  ]
 
   return (
     <div className="subscription-page">

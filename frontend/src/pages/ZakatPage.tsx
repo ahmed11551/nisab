@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { zakatApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import ErrorMessage from '../components/ErrorMessage'
 import './ZakatPage.css'
 
 const ZakatPage = () => {
@@ -57,8 +57,12 @@ const ZakatPage = () => {
       zakatApi.pay(data),
     {
       onSuccess: (response) => {
-        if (response.data.payment_url && tg) {
-          tg.openLink(response.data.payment_url)
+        if (response.data.payment_url) {
+          if (tg?.openLink) {
+            tg.openLink(response.data.payment_url)
+          } else if (typeof window !== 'undefined') {
+            window.open(response.data.payment_url, '_blank')
+          }
         }
       },
       onError: (error: Error) => {
@@ -204,9 +208,15 @@ const ZakatPage = () => {
         </button>
 
         {calculateMutation.error && (
-          <div className="error-message">
-            Ошибка расчета: {calculateMutation.error.message}
-          </div>
+          <ErrorMessage
+            title="Ошибка расчета закята"
+            message={
+              calculateMutation.error instanceof Error
+                ? calculateMutation.error.message
+                : 'Не удалось рассчитать закят. Проверьте введенные данные.'
+            }
+            onRetry={() => calculateMutation.reset()}
+          />
         )}
 
         {zakatDue !== null && (
@@ -214,13 +224,26 @@ const ZakatPage = () => {
             <h3>{t('zakat.zakatDue')}:</h3>
             <p className="zakat-amount">{zakatDue.toLocaleString()} ₽</p>
             {zakatDue > 0 && (
-              <button
-                className="pay-zakat-btn"
-                onClick={handlePayZakat}
-                disabled={payMutation.isLoading}
-              >
-                {payMutation.isLoading ? t('common.loading') : t('zakat.payZakat')}
-              </button>
+              <>
+                {payMutation.error && (
+                  <ErrorMessage
+                    title="Ошибка оплаты закята"
+                    message={
+                      payMutation.error instanceof Error
+                        ? payMutation.error.message
+                        : 'Не удалось инициализировать оплату. Попробуйте позже.'
+                    }
+                    onRetry={() => payMutation.reset()}
+                  />
+                )}
+                <button
+                  className="pay-zakat-btn"
+                  onClick={handlePayZakat}
+                  disabled={payMutation.isLoading}
+                >
+                  {payMutation.isLoading ? t('common.loading') : t('zakat.payZakat')}
+                </button>
+              </>
             )}
           </div>
         )}

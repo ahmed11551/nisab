@@ -1,9 +1,9 @@
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { campaignsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import ErrorMessage from '../components/ErrorMessage'
 import './CampaignForm.css'
 
 interface CampaignFormData {
@@ -34,7 +34,7 @@ const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
   const { t } = useTranslation()
   const tg = useTelegramWebApp()
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<CampaignFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<CampaignFormData>({
     defaultValues: {
       category: '',
       goal_amount: 0,
@@ -55,8 +55,10 @@ const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
       }),
     {
       onSuccess: (response) => {
-        if (tg) {
+        if (tg?.showAlert) {
           tg.showAlert('Кампания создана! Она будет опубликована после модерации.')
+        } else if (typeof window !== 'undefined') {
+          window.alert('Кампания создана! Она будет опубликована после модерации.')
         }
         onSuccess?.(response.data.id)
       },
@@ -174,6 +176,18 @@ const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
           но публично кампания будет доступна после модерации.
         </p>
       </div>
+
+      {mutation.error && (
+        <ErrorMessage
+          title="Ошибка при создании кампании"
+          message={
+            mutation.error instanceof Error
+              ? mutation.error.message
+              : 'Не удалось создать кампанию. Проверьте введенные данные и попробуйте снова.'
+          }
+          onRetry={() => mutation.reset()}
+        />
+      )}
 
       <button
         type="submit"

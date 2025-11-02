@@ -3,25 +3,29 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { partnersApi } from '../services/api'
+import Loading from '../components/Loading'
+import EmptyState from '../components/EmptyState'
+import ErrorMessage from '../components/ErrorMessage'
 import './PartnersPage.css'
 
 const PartnersPage = () => {
   const { t } = useTranslation()
   const [selectedCountry, setSelectedCountry] = useState<string>('')
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedCategories] = useState<string[]>([])
 
   const { data: countries, error: countriesError } = useQuery(
     'partner-countries',
     () => partnersApi.getCountries().then((res) => res.data),
     {
-      retry: 1,
+      retry: 2,
+      refetchOnWindowFocus: false,
       onError: (error) => {
         console.error('Failed to load countries:', error)
       },
     }
   )
 
-  const { data: funds, isLoading, error: fundsError } = useQuery(
+  const { data: funds, isLoading, error: fundsError, refetch } = useQuery(
     ['partner-funds', selectedCountry, selectedCategories],
     () =>
       partnersApi
@@ -32,7 +36,8 @@ const PartnersPage = () => {
         .then((res) => res.data),
     {
       enabled: true,
-      retry: 1,
+      retry: 2,
+      refetchOnWindowFocus: false,
       onError: (error) => {
         console.error('Failed to load funds:', error)
       },
@@ -59,12 +64,19 @@ const PartnersPage = () => {
       </div>
 
       {isLoading ? (
-        <div className="loading">{t('common.loading')}</div>
+        <Loading message="Загрузка фондов-партнёров..." />
       ) : fundsError || countriesError ? (
-        <div className="error-message">
-          <p>Ошибка загрузки данных. Проверьте подключение к серверу.</p>
-          <p>Для разработки используйте тестовые данные.</p>
-        </div>
+        <ErrorMessage
+          title="Ошибка загрузки данных"
+          message={
+            fundsError || countriesError
+              ? (fundsError instanceof Error ? fundsError.message : countriesError instanceof Error ? countriesError.message : 'Не удалось загрузить данные')
+              : 'Не удалось загрузить список фондов-партнёров'
+          }
+          onRetry={() => {
+            if (fundsError) refetch()
+          }}
+        />
       ) : (
         <>
           <div className="funds-list">
@@ -98,13 +110,20 @@ const PartnersPage = () => {
                 </div>
               ))
             ) : (
-              <div className="empty-state">
-                <p>Фонды-партнёры не найдены</p>
-                <p>Попробуйте выбрать другую страну или категорию</p>
-                <Link to="/partners/apply" className="apply-link">
-                  {t('partners.apply')} - Стать партнёром
-                </Link>
-              </div>
+              <EmptyState
+                icon="🤝"
+                title="Фонды-партнёры не найдены"
+                description={
+                  selectedCountry || selectedCategories.length > 0
+                    ? 'Попробуйте выбрать другую страну или категорию'
+                    : 'В данный момент нет доступных фондов-партнёров'
+                }
+                action={
+                  <Link to="/partners/apply" className="apply-link">
+                    {t('partners.apply')} - Стать партнёром
+                  </Link>
+                }
+              />
             )}
           </div>
 

@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { fundsApi } from '../services/api'
 import DonationForm from '../components/DonationForm'
+import Loading from '../components/Loading'
+import EmptyState from '../components/EmptyState'
+import ErrorMessage from '../components/ErrorMessage'
 import './DonatePage.css'
 
 const DonatePage = () => {
@@ -16,7 +19,7 @@ const DonatePage = () => {
     query: '',
   })
 
-  const { data: funds, isLoading } = useQuery(
+  const { data: funds, isLoading, error, refetch } = useQuery(
     ['funds', filters],
     () =>
       fundsApi
@@ -26,7 +29,14 @@ const DonatePage = () => {
           query: filters.query || undefined,
         })
         .then((res) => res.data),
-    { enabled: true }
+    {
+      enabled: true,
+      retry: 2,
+      refetchOnWindowFocus: false,
+      onError: (err: any) => {
+        console.error('Failed to load funds:', err)
+      },
+    }
   )
 
   const amountPresets = [100, 250, 500, 1000]
@@ -89,10 +99,26 @@ const DonatePage = () => {
 
       {/* Funds List */}
       {isLoading ? (
-        <div className="loading">{t('common.loading')}</div>
+        <Loading message="Загрузка фондов..." />
+      ) : error ? (
+        <ErrorMessage
+          title="Ошибка загрузки фондов"
+          message={error instanceof Error ? error.message : 'Не удалось загрузить список фондов'}
+          onRetry={() => refetch()}
+        />
+      ) : !funds?.items || funds.items.length === 0 ? (
+        <EmptyState
+          icon="🔍"
+          title="Фонды не найдены"
+          description={
+            filters.country || filters.purpose || filters.query
+              ? 'Попробуйте изменить фильтры поиска'
+              : 'Нет доступных фондов в данный момент'
+          }
+        />
       ) : (
         <div className="funds-list">
-          {funds?.items?.map((fund: any) => (
+          {funds.items.map((fund: any) => (
             <div
               key={fund.id}
               className={`fund-card ${selectedFund === fund.id ? 'selected' : ''}`}

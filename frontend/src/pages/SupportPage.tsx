@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { donationsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import ErrorMessage from '../components/ErrorMessage'
 import './SupportPage.css'
 
 const SupportPage = () => {
@@ -24,15 +25,21 @@ const SupportPage = () => {
       }),
     {
       onSuccess: (response) => {
-        if (response.data.payment_url && tg) {
-          tg.openLink(response.data.payment_url)
+        if (response.data.payment_url) {
+          if (tg?.openLink) {
+            tg.openLink(response.data.payment_url)
+          } else if (typeof window !== 'undefined') {
+            window.open(response.data.payment_url, '_blank')
+          }
           setSuccess(true)
         }
       },
       onError: (error: Error) => {
         console.error('Support donation error:', error)
-        if (tg) {
+        if (tg?.showAlert) {
           tg.showAlert('Ошибка при создании пожертвования. Попробуйте позже.')
+        } else if (typeof window !== 'undefined') {
+          window.alert('Ошибка при создании пожертвования. Попробуйте позже.')
         }
       },
     }
@@ -96,8 +103,11 @@ const SupportPage = () => {
             <button
               className="share-btn"
               onClick={() => {
-                if (tg) {
-                  tg.shareUrl(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=Я поддержал проект Nisab!`)
+                const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=Я поддержал проект Nisab!`
+                if (tg?.openLink) {
+                  tg.openLink(shareUrl)
+                } else if (typeof window !== 'undefined') {
+                  window.open(shareUrl, '_blank')
                 }
               }}
             >
@@ -105,15 +115,28 @@ const SupportPage = () => {
             </button>
           </div>
         ) : (
-          amount && (
-            <button
-              className="continue-btn"
-              onClick={handleDonate}
-              disabled={mutation.isLoading}
-            >
-              {mutation.isLoading ? t('common.loading') : `Поддержать ${amount} ₽`}
-            </button>
-          )
+          <>
+            {mutation.error && (
+              <ErrorMessage
+                title="Ошибка при поддержке проекта"
+                message={
+                  mutation.error instanceof Error
+                    ? mutation.error.message
+                    : 'Не удалось создать пожертвование. Попробуйте позже.'
+                }
+                onRetry={() => mutation.reset()}
+              />
+            )}
+            {amount && (
+              <button
+                className="continue-btn"
+                onClick={handleDonate}
+                disabled={mutation.isLoading}
+              >
+                {mutation.isLoading ? t('common.loading') : `Поддержать ${amount} ₽`}
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>

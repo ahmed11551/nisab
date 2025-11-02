@@ -1,19 +1,20 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { campaignsApi } from '../services/api'
+import Loading from '../components/Loading'
+import EmptyState from '../components/EmptyState'
+import ErrorMessage from '../components/ErrorMessage'
 import './CampaignsPage.css'
 
 const CampaignsPage = () => {
-  const { t } = useTranslation()
   const [filters, setFilters] = useState({
     country: '',
     category: '',
     status: 'active',
   })
 
-  const { data: campaigns, isLoading } = useQuery(
+  const { data: campaigns, isLoading, error, refetch } = useQuery(
     ['campaigns', filters],
     () =>
       campaignsApi
@@ -23,7 +24,14 @@ const CampaignsPage = () => {
           category: filters.category || undefined,
         })
         .then((res) => res.data),
-    { enabled: true }
+    {
+      enabled: true,
+      retry: 2,
+      refetchOnWindowFocus: false,
+      onError: (err: any) => {
+        console.error('Failed to load campaigns:', err)
+      },
+    }
   )
 
   const categories = [
@@ -79,11 +87,31 @@ const CampaignsPage = () => {
       </div>
 
       {isLoading ? (
-        <div className="loading">{t('common.loading')}</div>
+        <Loading message="Загрузка кампаний..." />
+      ) : error ? (
+        <ErrorMessage
+          title="Ошибка загрузки кампаний"
+          message={error instanceof Error ? error.message : 'Не удалось загрузить список кампаний'}
+          onRetry={() => refetch()}
+        />
+      ) : !campaigns?.items || campaigns.items.length === 0 ? (
+        <EmptyState
+          icon="🎯"
+          title="Кампании не найдены"
+          description={
+            filters.country || filters.category
+              ? 'Попробуйте изменить фильтры поиска'
+              : 'Нет активных кампаний в данный момент'
+          }
+          action={
+            <Link to="/campaigns/create" className="create-link">
+              Создать первую кампанию
+            </Link>
+          }
+        />
       ) : (
         <div className="campaigns-list">
-          {campaigns?.items?.length > 0 ? (
-            campaigns.items.map((campaign: any) => (
+          {campaigns.items.map((campaign: any) => (
               <Link key={campaign.id} to={`/campaigns/${campaign.id}`} className="campaign-card">
                 {campaign.image_url && (
                   <img src={campaign.image_url} alt={campaign.title} className="campaign-image" />
@@ -123,15 +151,7 @@ const CampaignsPage = () => {
                   </div>
                 </div>
               </Link>
-            ))
-          ) : (
-            <div className="empty-state">
-              <p>Нет активных кампаний</p>
-              <Link to="/campaigns/create" className="create-link">
-                Создать первую кампанию
-              </Link>
-            </div>
-          )}
+            ))}
         </div>
       )}
     </div>

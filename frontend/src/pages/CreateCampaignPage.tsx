@@ -1,10 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import CampaignForm from '../components/CampaignForm'
 import './CreateCampaignPage.css'
 
 const CreateCampaignPage = () => {
-  const { t } = useTranslation()
   const navigate = useNavigate()
 
   return (

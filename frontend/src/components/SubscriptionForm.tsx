@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { subscriptionsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import ErrorMessage from '../components/ErrorMessage'
 import './SubscriptionForm.css'
 
 interface SubscriptionFormData {
@@ -19,7 +20,7 @@ const SubscriptionForm = ({ onSuccess, onError }: SubscriptionFormProps) => {
   const { t } = useTranslation()
   const tg = useTelegramWebApp()
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<SubscriptionFormData>({
+  const { register, handleSubmit, watch } = useForm<SubscriptionFormData>({
     defaultValues: {
       plan_id: 'basic',
       period: 'P1M',
@@ -46,8 +47,12 @@ const SubscriptionForm = ({ onSuccess, onError }: SubscriptionFormProps) => {
       }),
     {
       onSuccess: (response) => {
-        if (response.data.confirmation_url && tg) {
-          tg.openLink(response.data.confirmation_url)
+        if (response.data.confirmation_url) {
+          if (tg?.openLink) {
+            tg.openLink(response.data.confirmation_url)
+          } else if (typeof window !== 'undefined') {
+            window.open(response.data.confirmation_url, '_blank')
+          }
           onSuccess?.(response.data.confirmation_url)
         }
       },
@@ -119,6 +124,18 @@ const SubscriptionForm = ({ onSuccess, onError }: SubscriptionFormProps) => {
         <span className="price-label">Сумма:</span>
         <span className="price-value">{currentPrice} ₽</span>
       </div>
+
+      {mutation.error && (
+        <ErrorMessage
+          title="Ошибка при создании подписки"
+          message={
+            mutation.error instanceof Error
+              ? mutation.error.message
+              : 'Не удалось создать подписку. Попробуйте позже.'
+          }
+          onRetry={() => mutation.reset()}
+        />
+      )}
 
       <button
         type="submit"

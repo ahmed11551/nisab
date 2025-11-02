@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { partnersApi } from '../services/api'
+import ErrorMessage from '../components/ErrorMessage'
+import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
 import './PartnerApplicationPage.css'
 
 const PartnerApplicationPage = () => {
@@ -23,12 +25,20 @@ const PartnerApplicationPage = () => {
   const categories = ['mosque', 'orphans', 'intl', 'foundation_needs']
   const countries = ['RU', 'KZ', 'TR', 'UA', 'BY'] // Should be fetched from API
 
+  const tg = useTelegramWebApp()
   const mutation = useMutation(
     (data: typeof formData) => partnersApi.submitApplication(data),
     {
       onSuccess: () => {
-        // Show success message and navigate
+        if (tg?.showAlert) {
+          tg.showAlert('Заявка отправлена! После рассмотрения вы получите уведомление.')
+        } else if (typeof window !== 'undefined') {
+          window.alert('Заявка отправлена! После рассмотрения вы получите уведомление.')
+        }
         navigate('/partners')
+      },
+      onError: (error: Error) => {
+        console.error('Failed to submit application:', error)
       },
     }
   )
@@ -156,6 +166,18 @@ const PartnerApplicationPage = () => {
           />
           <span>{t('partners.application.consent')} *</span>
         </label>
+
+        {mutation.error && (
+          <ErrorMessage
+            title="Ошибка при отправке заявки"
+            message={
+              mutation.error instanceof Error
+                ? mutation.error.message
+                : 'Не удалось отправить заявку. Проверьте введенные данные и попробуйте снова.'
+            }
+            onRetry={() => mutation.reset()}
+          />
+        )}
 
         <button type="submit" className="submit-btn" disabled={mutation.isLoading}>
           {mutation.isLoading ? t('common.loading') : t('partners.application.submit')}

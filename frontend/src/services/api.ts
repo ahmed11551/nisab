@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosError } from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000'
 
 class ApiClient {
   private client: AxiosInstance
@@ -33,14 +33,44 @@ class ApiClient {
       (response) => response,
       (error: AxiosError) => {
         // Handle common errors
-        if (error.response?.status === 401) {
-          // Handle unauthorized
-        } else if (error.response?.status === 403) {
-          // Handle forbidden
-        } else if (error.response?.status >= 500) {
-          // Handle server errors
+        if (error.response) {
+          // Server responded with error
+          const status = error.response.status
+          const data = error.response.data as any
+          
+          if (status === 401) {
+            // Unauthorized - try to use dev mode
+            console.warn('Unauthorized request, using dev mode if available')
+          } else if (status === 403) {
+            console.error('Forbidden:', data?.message || 'Access denied')
+          } else if (status === 404) {
+            console.error('Not found:', data?.message || 'Resource not found')
+          } else if (status >= 500) {
+            console.error('Server error:', data?.message || 'Internal server error')
+          }
+        } else if (error.request) {
+          // Request was made but no response received
+          console.error('Network error: No response from server')
+          // Create a more user-friendly error
+          const networkError = new Error('Не удалось подключиться к серверу. Проверьте интернет соединение.')
+          networkError.name = 'NetworkError'
+          return Promise.reject(networkError)
+        } else {
+          // Something happened in setting up the request
+          console.error('Request setup error:', error.message)
         }
-        return Promise.reject(error)
+        
+        // Enhance error with user-friendly message
+        const enhancedError = error as AxiosError & { userMessage?: string }
+        if (error.response?.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+          enhancedError.userMessage = (error.response.data as any).message
+        } else if (error.message) {
+          enhancedError.userMessage = error.message
+        } else {
+          enhancedError.userMessage = 'Произошла ошибка. Попробуйте позже.'
+        }
+        
+        return Promise.reject(enhancedError)
       }
     )
   }

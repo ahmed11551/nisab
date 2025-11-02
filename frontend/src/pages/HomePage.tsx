@@ -1,15 +1,52 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useQuery } from 'react-query'
+import { campaignsApi, fundsApi } from '../services/api'
 import './HomePage.css'
 
 const HomePage = () => {
   const { t } = useTranslation()
+
+  // Получаем статистику для главной страницы
+  const { data: recentCampaigns } = useQuery(
+    'home-campaigns',
+    () => campaignsApi.list({ status: 'active', size: 3 }).then((res) => res.data),
+    {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    }
+  )
+
+  const { data: topFunds } = useQuery(
+    'home-funds',
+    () => fundsApi.list({ size: 3 }).then((res) => res.data),
+    {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    }
+  )
 
   return (
     <div className="home-page">
       <div className="home-hero">
         <h1>Nisab - Садака Пасс</h1>
         <p>Ваша регулярная милостыня и помощь нуждающимся</p>
+      </div>
+
+      {/* Статистика */}
+      <div className="home-stats">
+        <div className="stat-card">
+          <div className="stat-value">{topFunds?.total || 0}</div>
+          <div className="stat-label">Фондов</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">{recentCampaigns?.total || 0}</div>
+          <div className="stat-label">Кампаний</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value">∞</div>
+          <div className="stat-label">Добрых дел</div>
+        </div>
       </div>
 
       <div className="home-actions">

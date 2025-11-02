@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
 import { campaignsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
+import ErrorMessage from '../components/ErrorMessage'
 import './CampaignDonateForm.css'
 
 interface CampaignDonateFormData {
@@ -39,8 +40,12 @@ const CampaignDonateForm = ({ campaignId, onSuccess, onError }: CampaignDonateFo
       }),
     {
       onSuccess: (response) => {
-        if (response.data.payment_url && tg) {
-          tg.openLink(response.data.payment_url)
+        if (response.data.payment_url) {
+          if (tg?.openLink) {
+            tg.openLink(response.data.payment_url)
+          } else if (typeof window !== 'undefined') {
+            window.open(response.data.payment_url, '_blank')
+          }
           onSuccess?.(response.data.payment_url)
         }
       },
@@ -99,6 +104,18 @@ const CampaignDonateForm = ({ campaignId, onSuccess, onError }: CampaignDonateFo
         />
         {errors.amount && <span className="error">{errors.amount.message}</span>}
       </div>
+
+      {mutation.error && (
+        <ErrorMessage
+          title="Ошибка при пожертвовании"
+          message={
+            mutation.error instanceof Error
+              ? mutation.error.message
+              : 'Не удалось инициализировать пожертвование. Попробуйте позже.'
+          }
+          onRetry={() => mutation.reset()}
+        />
+      )}
 
       <button
         type="submit"

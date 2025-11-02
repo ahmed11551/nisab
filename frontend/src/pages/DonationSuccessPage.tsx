@@ -26,9 +26,12 @@ const DonationSuccessPage = () => {
   }, [donation])
 
   const handleShare = () => {
-    if (tg) {
-      const message = `Я поддержал ${donation?.fund?.name || 'благотворительный фонд'} на сумму ${donation?.amount || 0} ${donation?.currency || 'RUB'}. Присоединяйтесь! 🙏`
-      tg.shareUrl(`https://t.me/share/url?url=${encodeURIComponent(window.location.origin)}&text=${encodeURIComponent(message)}`)
+    const message = `Я поддержал ${donation?.fund?.name || 'благотворительный фонд'} на сумму ${donation?.amount || 0} ${donation?.currency || 'RUB'}. Присоединяйтесь! 🙏`
+    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.origin)}&text=${encodeURIComponent(message)}`
+    if (tg?.openLink) {
+      tg.openLink(shareUrl)
+    } else if (typeof window !== 'undefined') {
+      window.open(shareUrl, '_blank')
     }
   }
 
