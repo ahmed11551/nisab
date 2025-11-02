@@ -135,7 +135,8 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
       <input type="hidden" {...register('fund_id')} value={fundId} />
       <input type="hidden" {...register('purpose')} />
 
-      {mutation.error && (
+      {/* В демо-режиме не показываем ошибки подключения */}
+      {mutation.error && !mutation.error.message?.includes('демо-режим') && (
         <ErrorMessage
           title="Ошибка при создании пожертвования"
           message={

@@ -122,7 +122,8 @@ const CampaignDonateForm = ({ campaignId, onSuccess, onError }: CampaignDonateFo
         {errors.amount && <span className="error">{errors.amount.message}</span>}
       </div>
 
-      {mutation.error && (
+      {/* В демо-режиме не показываем ошибки подключения */}
+      {mutation.error && !mutation.error.message?.includes('демо-режим') && (
         <ErrorMessage
           title="Ошибка при пожертвовании"
           message={
