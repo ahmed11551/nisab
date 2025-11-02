@@ -18,6 +18,8 @@ const commands = [
   { command: 'support', description: 'Поддержать проект' },
   { command: 'zakat', description: 'Калькулятор закята' },
   { command: 'subscribe', description: 'Подписки на регулярные пожертвования' },
+  { command: 'campaigns', description: 'Целевые кампании' },
+  { command: 'partners', description: 'Фонды-партнёры' },
   { command: 'help', description: 'Справка по использованию бота' },
   { command: 'info', description: 'Информация о боте' },
 ]

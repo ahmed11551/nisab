@@ -246,6 +246,46 @@ ID: ${donation.id}
           },
         })
 
+      case '/campaigns':
+        return this.sendMessage(chatId, '🎯 Целевые кампании:', {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: '🌐 Открыть кампании',
+                  web_app: { url: `${config.corsOrigin}/campaigns` },
+                },
+              ],
+              [
+                {
+                  text: '➕ Создать кампанию',
+                  web_app: { url: `${config.corsOrigin}/campaigns/create` },
+                },
+              ],
+            ],
+          },
+        })
+
+      case '/partners':
+        return this.sendMessage(chatId, '🤝 Фонды-партнёры:', {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: '🌐 Открыть каталог фондов',
+                  web_app: { url: `${config.corsOrigin}/partners` },
+                },
+              ],
+              [
+                {
+                  text: '📝 Оставить заявку на партнёрство',
+                  web_app: { url: `${config.corsOrigin}/partners/apply` },
+                },
+              ],
+            ],
+          },
+        })
+
       case '/help':
         return this.sendMessage(chatId, `📖 <b>Помощь по использованию бота</b>
 
@@ -255,6 +295,8 @@ ID: ${donation.id}
 /support - Поддержать проект
 /zakat - Калькулятор закята
 /subscribe - Подписки
+/campaigns - Целевые кампании
+/partners - Фонды-партнёры
 /help - Эта справка
 
 <b>Основные функции:</b>
@@ -416,18 +458,9 @@ Nisab - платформа для садака и закята. Мы помог�
       } else if (data === 'zakat') {
         await this.handleCommand(from.id, '/zakat')
       } else if (data === 'campaigns') {
-        await this.sendMessage(from.id, 'Целевые кампании:', {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: '🌐 Открыть кампании',
-                  web_app: { url: `${config.corsOrigin}/campaigns` },
-                },
-              ],
-            ],
-          },
-        })
+        await this.handleCommand(from.id, '/campaigns')
+      } else if (data === 'partners') {
+        await this.handleCommand(from.id, '/partners')
       } else if (data === 'history') {
         await this.sendMessage(from.id, '📖 История пожертвований и подписок доступна в Mini App:', {
           reply_markup: {
