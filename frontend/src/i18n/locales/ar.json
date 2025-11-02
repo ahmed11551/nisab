@@ -1,0 +1,82 @@
+{
+  "common": {
+    "loading": "جار التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "back": "رجوع",
+    "next": "التالي",
+    "close": "إغلاق"
+  },
+  "nav": {
+    "donate": "تبرع",
+    "support": "دعم",
+    "campaigns": "حملات",
+    "subscription": "اشتراك",
+    "zakat": "زكاة",
+    "history": "السجل",
+    "partners": "صناديق الشركاء"
+  },
+  "donate": {
+    "title": "تبرع",
+    "selectFund": "اختر الصندوق",
+    "selectAmount": "اختر المبلغ",
+    "amount": "المبلغ",
+    "presets": "اختيار سريع",
+    "customAmount": "مبلغ آخر",
+    "continue": "متابعة",
+    "payment": "الدفع",
+    "thankYou": "شكراً لك على تبرعك!",
+    "share": "مشاركة",
+    "makeRegular": "جعله منتظماً"
+  },
+  "subscription": {
+    "title": "اشتراك صدقة",
+    "description": "صدقتك المنتظمة. اجعل صدقة جارية لتطوير الأمة الرقمية واحصل على المعرفة والامتنان.",
+    "basic": "أساسي",
+    "pro": "برو",
+    "premium": "بريميوم",
+    "perMonth": "شهرياً",
+    "selectPlan": "اختر الخطة",
+    "selectPeriod": "اختر الفترة",
+    "discount": "خصم",
+    "freeMonths": "أشهر مجانية",
+    "charity": "للصدقة"
+  },
+  "zakat": {
+    "title": "حاسبة الزكاة",
+    "calculate": "حساب",
+    "payZakat": "دفع الزكاة",
+    "disclaimer": "الحساب للرجوع فقط، اتبع مذهب/رأي عالمك.",
+    "nisab": "النصاب",
+    "zakatDue": "الزكاة المستحقة",
+    "aboveNisab": "فوق النصاب"
+  },
+  "partners": {
+    "title": "صناديق الشركاء",
+    "apply": "تقدم بطلب",
+    "verified": "تم التحقق",
+    "details": "التفاصيل",
+    "donate": "تبرع",
+    "noPartners": "لا توجد صناديق شريكة في الدولة المحددة بعد. هل تريد اقتراح صندوقك؟",
+    "application": {
+      "title": "طلب شراكة",
+      "orgName": "اسم المنظمة",
+      "country": "الدولة",
+      "categories": "فئات المساعدة",
+      "website": "الموقع/وسائل التواصل",
+      "contactName": "الشخص المسؤول",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "description": "وصف مختصر/المهمة",
+      "consent": "موافقة على معالجة البيانات",
+      "submit": "إرسال الطلب",
+      "thankYou": "شكراً، تم إرسال الطلب. سنتواصل معك عبر البريد الإلكتروني خلال N أيام عمل."
+    }
+  }
+}
+

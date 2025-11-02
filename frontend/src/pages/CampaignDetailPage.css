@@ -1,0 +1,120 @@
+.campaign-detail-page {
+  padding: 0;
+}
+
+.campaign-hero-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.campaign-content {
+  padding: 20px;
+}
+
+.campaign-content h1 {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.campaign-description {
+  margin: 0 0 24px 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.campaign-progress-section {
+  margin-bottom: 24px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--tg-theme-button-color, #2481cc);
+  transition: width 0.3s;
+}
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.campaign-meta {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.campaign-category,
+.campaign-country {
+  padding: 6px 12px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.campaign-completed {
+  padding: 24px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.campaign-completed h3 {
+  margin: 0 0 8px 0;
+  color: #4caf50;
+}
+
+.campaign-completed p {
+  margin: 0 0 16px 0;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.report-btn {
+  padding: 12px 24px;
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.report-btn:hover {
+  opacity: 0.9;
+}
+
+.campaign-pending {
+  padding: 24px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+  text-align: center;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.error {
+  text-align: center;
+  padding: 40px;
+  color: #f44336;
+}

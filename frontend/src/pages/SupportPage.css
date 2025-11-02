@@ -1,0 +1,138 @@
+.support-page {
+  padding: 20px;
+}
+
+.support-page h1 {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.support-description {
+  margin: 0 0 24px 0;
+  color: var(--tg-theme-hint-color, #999999);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.amount-selection {
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.amount-selection h2 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.amount-presets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.amount-btn {
+  padding: 16px;
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  border: 2px solid var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.amount-btn:hover {
+  border-color: var(--tg-theme-button-color, #2481cc);
+}
+
+.amount-btn.active {
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  border-color: var(--tg-theme-button-color, #2481cc);
+}
+
+.custom-amount {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.custom-amount label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.custom-amount input {
+  padding: 12px;
+  border: 2px solid var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.custom-amount input:focus {
+  outline: none;
+  border-color: var(--tg-theme-button-color, #2481cc);
+}
+
+.continue-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.continue-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.continue-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.success-message {
+  padding: 24px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.success-message h2 {
+  margin: 0 0 8px 0;
+  color: #4caf50;
+  font-size: 20px;
+}
+
+.success-message p {
+  margin: 0 0 16px 0;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.share-btn {
+  padding: 12px 24px;
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.share-btn:hover {
+  opacity: 0.9;
+}

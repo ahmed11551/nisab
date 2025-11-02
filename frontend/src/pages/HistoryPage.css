@@ -1,0 +1,234 @@
+.history-page {
+  padding: 20px;
+}
+
+.history-page h1 {
+  margin: 0 0 20px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.history-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--tg-theme-secondary-bg-color, #f1f1f1);
+}
+
+.tab-btn {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--tg-theme-hint-color, #999999);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -2px;
+}
+
+.tab-btn:hover {
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.tab-btn.active {
+  color: var(--tg-theme-button-color, #2481cc);
+  border-bottom-color: var(--tg-theme-button-color, #2481cc);
+}
+
+.history-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filter-select {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 8px;
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
+  font-size: 14px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--tg-theme-button-color, #2481cc);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.history-item {
+  padding: 16px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.history-item-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.history-description {
+  margin: 0;
+  font-size: 14px;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.history-amount {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--tg-theme-button-color, #2481cc);
+}
+
+.history-item-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.history-date {
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.history-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.history-status.paid,
+.history-status.active {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+
+.history-status.created {
+  background-color: #fff3e0;
+  color: #ff9800;
+}
+
+.history-status.failed {
+  background-color: #ffebee;
+  color: #f44336;
+}
+
+.receipt-link {
+  color: var(--tg-theme-button-color, #2481cc);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.receipt-link:hover {
+  text-decoration: underline;
+}
+
+.reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.report-card {
+  padding: 20px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.report-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.verified-badge {
+  padding: 4px 8px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.report-period {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.report-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--tg-theme-bg-color, #ffffff);
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.report-link {
+  display: inline-block;
+  padding: 10px 16px;
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.report-link:hover {
+  opacity: 0.9;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--tg-theme-hint-color, #999999);
+}

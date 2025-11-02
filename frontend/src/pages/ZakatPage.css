@@ -1,0 +1,132 @@
+.zakat-page {
+  padding: 16px;
+}
+
+.zakat-page h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.zakat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-section {
+  padding: 16px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+}
+
+.form-section h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.form-section label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.form-section input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border: 2px solid var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.nisab-info {
+  padding: 16px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.nisab-info p {
+  font-size: 16px;
+}
+
+.calculate-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.calculate-btn:hover {
+  opacity: 0.9;
+}
+
+.zakat-result {
+  padding: 20px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.zakat-result h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.zakat-amount {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--tg-theme-button-color, #2481cc);
+  margin-bottom: 16px;
+}
+
+.pay-zakat-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pay-zakat-btn:hover {
+  opacity: 0.9;
+}
+
+.disclaimer {
+  font-size: 12px;
+  color: var(--tg-theme-hint-color, #999999);
+  text-align: center;
+  margin-top: 16px;
+}
+
+.error-message {
+  padding: 12px;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.calculate-btn:disabled,
+.pay-zakat-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+

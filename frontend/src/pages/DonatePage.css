@@ -1,0 +1,207 @@
+.donate-page {
+  padding: 20px;
+}
+
+.donate-page h1 {
+  margin: 0 0 20px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+}
+
+.filter-input {
+  padding: 12px;
+  border: 2px solid var(--tg-theme-bg-color, #ffffff);
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: var(--tg-theme-button-color, #2481cc);
+}
+
+.filter-select {
+  padding: 12px;
+  border: 2px solid var(--tg-theme-bg-color, #ffffff);
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--tg-theme-button-color, #2481cc);
+}
+
+.funds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.fund-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.fund-card:hover {
+  border-color: var(--tg-theme-button-color, #2481cc);
+  transform: translateY(-2px);
+}
+
+.fund-card.selected {
+  border-color: var(--tg-theme-button-color, #2481cc);
+  background-color: var(--tg-theme-bg-color, #ffffff);
+}
+
+.fund-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.fund-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fund-info h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.fund-description {
+  margin: 0;
+  font-size: 14px;
+  color: var(--tg-theme-hint-color, #999999);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fund-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge.verified {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+
+.badge.country {
+  background-color: var(--tg-theme-hint-color, #999999);
+  color: var(--tg-theme-bg-color, #ffffff);
+}
+
+.amount-selection {
+  padding: 20px;
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 12px;
+}
+
+.amount-selection h2 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.amount-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.amount-btn {
+  padding: 12px;
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  border: 2px solid var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.amount-btn:hover {
+  border-color: var(--tg-theme-button-color, #2481cc);
+}
+
+.amount-btn.active {
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  border-color: var(--tg-theme-button-color, #2481cc);
+}
+
+.custom-amount {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.custom-amount label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.custom-amount input {
+  padding: 12px;
+  border: 2px solid var(--tg-theme-secondary-bg-color, #f1f1f1);
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.custom-amount input:focus {
+  outline: none;
+  border-color: var(--tg-theme-button-color, #2481cc);
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+@media (max-width: 480px) {
+  .amount-presets {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,113 @@
+.donation-success-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+}
+
+.pending-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+}
+
+.donation-success-page h1 {
+  margin: 0 0 16px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.success-message {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: var(--tg-theme-hint-color, #999999);
+  line-height: 1.5;
+}
+
+.success-message strong {
+  color: var(--tg-theme-button-color, #2481cc);
+  font-weight: 600;
+}
+
+.fund-name {
+  margin: 0 0 32px 0;
+  font-size: 14px;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.pending-message {
+  margin: 0 0 32px 0;
+  font-size: 16px;
+  color: var(--tg-theme-hint-color, #999999);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.share-btn,
+.donate-again-btn,
+.subscribe-btn {
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.share-btn {
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  border: none;
+}
+
+.donate-again-btn {
+  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  color: var(--tg-theme-text-color, #000000);
+  border: 2px solid var(--tg-theme-button-color, #2481cc);
+}
+
+.subscribe-btn {
+  background-color: transparent;
+  color: var(--tg-theme-button-color, #2481cc);
+  border: 2px solid var(--tg-theme-button-color, #2481cc);
+}
+
+.share-btn:hover,
+.donate-again-btn:hover,
+.subscribe-btn:hover {
+  opacity: 0.9;
+}
+
+.history-link {
+  padding: 12px 24px;
+  color: var(--tg-theme-button-color, #2481cc);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.history-link:hover {
+  text-decoration: underline;
+}
+
+.loading {
+  padding: 40px;
+  color: var(--tg-theme-hint-color, #999999);
+}
+

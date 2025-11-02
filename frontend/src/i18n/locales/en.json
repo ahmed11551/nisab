@@ -1,0 +1,82 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close"
+  },
+  "nav": {
+    "donate": "Donate",
+    "support": "Support",
+    "campaigns": "Campaigns",
+    "subscription": "Subscription",
+    "zakat": "Zakat",
+    "history": "History",
+    "partners": "Partner Funds"
+  },
+  "donate": {
+    "title": "Donation",
+    "selectFund": "Select fund",
+    "selectAmount": "Select amount",
+    "amount": "Amount",
+    "presets": "Quick select",
+    "customAmount": "Custom amount",
+    "continue": "Continue",
+    "payment": "Payment",
+    "thankYou": "Thank you for your donation!",
+    "share": "Share",
+    "makeRegular": "Make it regular"
+  },
+  "subscription": {
+    "title": "Sadaqa Subscription",
+    "description": "Your regular charity. Make sadaqa jariya for the development of the digital ummah and get access to knowledge and gratitude.",
+    "basic": "Basic",
+    "pro": "Pro",
+    "premium": "Premium",
+    "perMonth": "per month",
+    "selectPlan": "Select plan",
+    "selectPeriod": "Select period",
+    "discount": "discount",
+    "freeMonths": "free months",
+    "charity": "To charity"
+  },
+  "zakat": {
+    "title": "Zakat Calculator",
+    "calculate": "Calculate",
+    "payZakat": "Pay Zakat",
+    "disclaimer": "Calculation is for reference only, follow your scholar's madhhab/opinion.",
+    "nisab": "Nisab",
+    "zakatDue": "Zakat due",
+    "aboveNisab": "Above nisab"
+  },
+  "partners": {
+    "title": "Partner Funds",
+    "apply": "Apply",
+    "verified": "Verified",
+    "details": "Details",
+    "donate": "Donate",
+    "noPartners": "No partner funds in selected country yet. Want to suggest your fund?",
+    "application": {
+      "title": "Partnership Application",
+      "orgName": "Organization name",
+      "country": "Country",
+      "categories": "Help categories",
+      "website": "Website/socials",
+      "contactName": "Contact person",
+      "email": "E-mail",
+      "phone": "Phone",
+      "description": "Short description/mission",
+      "consent": "Data processing consent",
+      "submit": "Submit application",
+      "thankYou": "Thank you, application submitted. We will contact you via email within N business days."
+    }
+  }
+}
+
