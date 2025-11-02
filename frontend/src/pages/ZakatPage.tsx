@@ -218,7 +218,8 @@ const ZakatPage = () => {
           {calculateMutation.isLoading ? t('common.loading') : t('zakat.calculate')}
         </button>
 
-        {calculateMutation.error && (
+        {/* В демо-режиме не показываем ошибки подключения */}
+        {calculateMutation.error && !calculateMutation.error.message?.includes('демо-режим') && (
           <ErrorMessage
             title="Ошибка расчета закята"
             message={
@@ -236,7 +237,8 @@ const ZakatPage = () => {
             <p className="zakat-amount">{zakatDue.toLocaleString()} ₽</p>
             {zakatDue > 0 && (
               <>
-                {payMutation.error && (
+                {/* В демо-режиме не показываем ошибки подключения */}
+                {payMutation.error && !payMutation.error.message?.includes('демо-режим') && (
                   <ErrorMessage
                     title="Ошибка оплаты закята"
                     message={

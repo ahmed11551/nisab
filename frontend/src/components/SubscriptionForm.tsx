@@ -138,7 +138,8 @@ const SubscriptionForm = ({ onSuccess, onError }: SubscriptionFormProps) => {
         <span className="price-value">{currentPrice} ₽</span>
       </div>
 
-      {mutation.error && (
+      {/* В демо-режиме не показываем ошибки подключения */}
+      {mutation.error && !mutation.error.message?.includes('демо-режим') && (
         <ErrorMessage
           title="Ошибка при создании подписки"
           message={

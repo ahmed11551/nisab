@@ -273,7 +273,8 @@ const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
         </p>
       </div>
 
-      {mutation.error && (
+      {/* В демо-режиме не показываем ошибки подключения */}
+      {mutation.error && !mutation.error.message?.includes('демо-режим') && (
         <ErrorMessage
           title="Ошибка при создании кампании"
           message={

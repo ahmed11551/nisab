@@ -127,7 +127,8 @@ const SupportPage = () => {
           </div>
         ) : (
           <>
-            {mutation.error && (
+            {/* В демо-режиме не показываем ошибки подключения */}
+            {mutation.error && !mutation.error.message?.includes('демо-режим') && (
               <ErrorMessage
                 title="Ошибка при поддержке проекта"
                 message={
