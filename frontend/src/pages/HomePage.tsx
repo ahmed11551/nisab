@@ -10,7 +10,10 @@ const HomePage = () => {
   // Получаем статистику для главной страницы
   const { data: recentCampaigns } = useQuery(
     'home-campaigns',
-    () => campaignsApi.list({ status: 'active', size: 3 }).then((res) => res.data),
+    () => campaignsApi.list({ status: 'active', size: 3 }).then((res) => {
+      // Поддержка формата: { success: true, data: {...} } или {...}
+      return res.data?.data || res.data
+    }),
     {
       retry: 1,
       refetchOnWindowFocus: false,
@@ -19,7 +22,10 @@ const HomePage = () => {
 
   const { data: topFunds } = useQuery(
     'home-funds',
-    () => fundsApi.list({ size: 3 }).then((res) => res.data),
+    () => fundsApi.list({ size: 3 }).then((res) => {
+      // Поддержка формата: { success: true, data: {...} } или {...}
+      return res.data?.data || res.data
+    }),
     {
       retry: 1,
       refetchOnWindowFocus: false,

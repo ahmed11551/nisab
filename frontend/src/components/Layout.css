@@ -14,6 +14,7 @@
 .layout-main {
   flex: 1;
   padding: 20px 16px;
+  padding-top: 20px; /* Will be adjusted if demo banner is visible */
   max-width: 100%;
   overflow-x: hidden;
 }

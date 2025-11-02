@@ -11,7 +11,10 @@ const CampaignDetailPage = () => {
 
   const { data: campaign, isLoading, error, refetch } = useQuery(
     ['campaign', id],
-    () => campaignsApi.get(id!).then((res) => res.data),
+    () => campaignsApi.get(id!).then((res) => {
+      // Поддержка формата: { success: true, data: {...} } или {...}
+      return res.data?.data || res.data
+    }),
     {
       enabled: !!id,
       retry: 2,
@@ -53,7 +56,9 @@ const CampaignDetailPage = () => {
     )
   }
 
-  const progress = (campaign.collected_amount / campaign.goal_amount) * 100
+  const progress = campaign?.collected_amount && campaign?.goal_amount 
+    ? (campaign.collected_amount / campaign.goal_amount) * 100 
+    : 0
 
   return (
     <div className="campaign-detail-page">
@@ -70,7 +75,7 @@ const CampaignDetailPage = () => {
           </div>
           <div className="progress-text">
             <span>
-              {campaign.collected_amount.toLocaleString()} / {campaign.goal_amount.toLocaleString()} ₽
+              {(campaign.collected_amount || 0).toLocaleString()} / {(campaign.goal_amount || 0).toLocaleString()} ₽
             </span>
             <span>{Math.round(progress)}%</span>
           </div>
