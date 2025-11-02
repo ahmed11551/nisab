@@ -52,7 +52,7 @@ class ApiClient {
           // Request was made but no response received
           console.error('Network error: No response from server')
           // Create a more user-friendly error
-          const networkError = new Error('Не удалось подключиться к серверу. Проверьте интернет соединение.')
+          const networkError = new Error('Не удалось подключиться к серверу. Проверьте, что сервер запущен на http://localhost:3000')
           networkError.name = 'NetworkError'
           return Promise.reject(networkError)
         } else {

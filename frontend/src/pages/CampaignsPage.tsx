@@ -7,6 +7,46 @@ import EmptyState from '../components/EmptyState'
 import ErrorMessage from '../components/ErrorMessage'
 import './CampaignsPage.css'
 
+// Демо-данные для визуальной оценки карточек
+const DEMO_CAMPAIGNS = [
+  {
+    id: 'demo-1',
+    title: 'Ремонт мечети в Казани',
+    description: 'Срочно требуется ремонт кровли и фасада исторической мечети. Необходимо собрать средства для восстановления архитектурного памятника.',
+    category: 'mosque',
+    country_code: 'RU',
+    goal_amount: 2500000,
+    collected_amount: 1250000,
+    participant_count: 342,
+    image_url: 'https://images.unsplash.com/photo-1564239167038-f6b73c70aec0?w=800',
+    verified_by_admin: true,
+  },
+  {
+    id: 'demo-2',
+    title: 'Поддержка детей-сирот',
+    description: 'Сбор средств на обучение, питание и одежду для детей-сирот в детском доме. Поможем детям получить образование и найти свой путь в жизни.',
+    category: 'orphans',
+    country_code: 'RU',
+    goal_amount: 500000,
+    collected_amount: 325000,
+    participant_count: 156,
+    image_url: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=800',
+    verified_by_admin: true,
+  },
+  {
+    id: 'demo-3',
+    title: 'Образовательные курсы для мусульманской молодежи',
+    description: 'Организация бесплатных образовательных курсов по арабскому языку, Корану и исламской этике для молодежи в регионе.',
+    category: 'education',
+    country_code: 'KZ',
+    goal_amount: 750000,
+    collected_amount: 480000,
+    participant_count: 89,
+    image_url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800',
+    verified_by_admin: false,
+  },
+]
+
 const CampaignsPage = () => {
   const [filters, setFilters] = useState({
     country: '',
@@ -33,6 +73,11 @@ const CampaignsPage = () => {
       },
     }
   )
+
+  // Используем демо-данные если нет реальных данных или API не отвечает
+  const displayCampaigns = campaigns?.items && campaigns.items.length > 0 
+    ? campaigns.items 
+    : (!isLoading && !error ? DEMO_CAMPAIGNS : [])
 
   const categories = [
     { value: '', label: 'Все категории' },
@@ -94,7 +139,7 @@ const CampaignsPage = () => {
           message={error instanceof Error ? error.message : 'Не удалось загрузить список кампаний'}
           onRetry={() => refetch()}
         />
-      ) : !campaigns?.items || campaigns.items.length === 0 ? (
+      ) : displayCampaigns.length === 0 ? (
         <EmptyState
           icon="🎯"
           title="Кампании не найдены"
@@ -111,7 +156,20 @@ const CampaignsPage = () => {
         />
       ) : (
         <div className="campaigns-list">
-          {campaigns.items.map((campaign: any) => (
+          {displayCampaigns.length > 0 && displayCampaigns[0].id?.startsWith('demo-') && (
+            <div style={{ 
+              padding: '12px 16px', 
+              marginBottom: '16px', 
+              background: 'var(--bg-tertiary)', 
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid rgba(74, 158, 255, 0.2)',
+              fontSize: '13px',
+              color: 'var(--text-secondary)'
+            }}>
+              ⚠️ Показаны демонстрационные данные для визуальной оценки карточек
+            </div>
+          )}
+          {displayCampaigns.map((campaign: any) => (
               <Link key={campaign.id} to={`/campaigns/${campaign.id}`} className="campaign-card">
                 {campaign.image_url && (
                   <img src={campaign.image_url} alt={campaign.title} className="campaign-image" />

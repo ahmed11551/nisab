@@ -36,12 +36,14 @@ const SupportPage = () => {
       },
       onError: (error: Error) => {
         console.error('Support donation error:', error)
+        const errorMessage = error.message || 'Не удалось подключиться к серверу. Проверьте, что сервер запущен на порту 3000.'
         if (tg?.showAlert) {
-          tg.showAlert('Ошибка при создании пожертвования. Попробуйте позже.')
+          tg.showAlert(errorMessage)
         } else if (typeof window !== 'undefined') {
-          window.alert('Ошибка при создании пожертвования. Попробуйте позже.')
+          window.alert(errorMessage)
         }
       },
+      retry: false, // Don't retry automatically to prevent stuck loading state
     }
   )
 

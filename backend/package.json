@@ -10,6 +10,7 @@
     "migrate": "tsx src/database/migrate.ts",
     "migrate:down": "tsx src/database/migrate.ts down",
     "seed": "tsx src/database/seed.ts",
+    "set-commands": "tsx scripts/setCommands.ts",
     "lint": "eslint . --ext .ts",
     "test": "jest"
   },

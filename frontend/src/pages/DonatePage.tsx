@@ -8,6 +8,37 @@ import EmptyState from '../components/EmptyState'
 import ErrorMessage from '../components/ErrorMessage'
 import './DonatePage.css'
 
+// Демо-данные для визуальной оценки карточек фондов
+const DEMO_FUNDS = [
+  {
+    id: 'demo-fund-1',
+    name: 'Фонд помощи нуждающимся',
+    short_desc: 'Оказание помощи нуждающимся семьям, сиротам и пожилым людям',
+    logo_url: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=200',
+    country_code: 'RU',
+    verified: true,
+    categories: ['orphans', 'intl'],
+  },
+  {
+    id: 'demo-fund-2',
+    name: 'Образовательный фонд',
+    short_desc: 'Поддержка образования мусульманской молодежи и студентов',
+    logo_url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=200',
+    country_code: 'KZ',
+    verified: true,
+    categories: ['education'],
+  },
+  {
+    id: 'demo-fund-3',
+    name: 'Фонд мечетей',
+    short_desc: 'Строительство и ремонт мечетей в регионах',
+    logo_url: 'https://images.unsplash.com/photo-1564239167038-f6b73c70aec0?w=200',
+    country_code: 'RU',
+    verified: false,
+    categories: ['mosque'],
+  },
+]
+
 const DonatePage = () => {
   const { t } = useTranslation()
   const [selectedFund, setSelectedFund] = useState<string | null>(null)
@@ -38,6 +69,11 @@ const DonatePage = () => {
       },
     }
   )
+
+  // Используем демо-данные если нет реальных данных или API не отвечает
+  const displayFunds = funds?.items && funds.items.length > 0 
+    ? funds.items 
+    : (!isLoading && !error ? DEMO_FUNDS : [])
 
   const amountPresets = [100, 250, 500, 1000]
 
@@ -106,7 +142,7 @@ const DonatePage = () => {
           message={error instanceof Error ? error.message : 'Не удалось загрузить список фондов'}
           onRetry={() => refetch()}
         />
-      ) : !funds?.items || funds.items.length === 0 ? (
+      ) : displayFunds.length === 0 ? (
         <EmptyState
           icon="🔍"
           title="Фонды не найдены"
@@ -118,7 +154,20 @@ const DonatePage = () => {
         />
       ) : (
         <div className="funds-list">
-          {funds.items.map((fund: any) => (
+          {displayFunds.length > 0 && displayFunds[0].id?.startsWith('demo-') && (
+            <div style={{ 
+              padding: '12px 16px', 
+              marginBottom: '16px', 
+              background: 'var(--bg-tertiary)', 
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid rgba(74, 158, 255, 0.2)',
+              fontSize: '13px',
+              color: 'var(--text-secondary)'
+            }}>
+              ⚠️ Показаны демонстрационные данные для визуальной оценки карточек
+            </div>
+          )}
+          {displayFunds.map((fund: any) => (
             <div
               key={fund.id}
               className={`fund-card ${selectedFund === fund.id ? 'selected' : ''}`}

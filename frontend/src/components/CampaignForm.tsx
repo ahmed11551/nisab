@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useMutation } from 'react-query'
+import { useState } from 'react'
 import { campaignsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
 import ErrorMessage from '../components/ErrorMessage'
@@ -33,13 +34,17 @@ const categories = [
 const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
   const { t } = useTranslation()
   const tg = useTelegramWebApp()
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
-  const { register, handleSubmit, formState: { errors } } = useForm<CampaignFormData>({
+  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<CampaignFormData>({
     defaultValues: {
       category: '',
       goal_amount: 0,
     },
   })
+
+  const imageUrl = watch('image_url')
 
   const mutation = useMutation(
     (data: CampaignFormData) =>
@@ -63,16 +68,40 @@ const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
         onSuccess?.(response.data.id)
       },
       onError: (error: Error) => {
+        console.error('Campaign creation error:', error)
+        const errorMessage = error.message || 'Не удалось создать кампанию. Проверьте введенные данные.'
+        if (tg?.showAlert) {
+          tg.showAlert(errorMessage)
+        } else if (typeof window !== 'undefined') {
+          window.alert(errorMessage)
+        }
         onError?.(error)
       },
+      retry: false, // Don't retry automatically to prevent stuck loading state
     }
   )
 
   const onSubmit = (data: CampaignFormData) => {
     if (!data.goal_amount || data.goal_amount <= 0) {
+      if (tg?.showAlert) {
+        tg.showAlert('Укажите сумму цели больше 0')
+      } else if (typeof window !== 'undefined') {
+        window.alert('Укажите сумму цели больше 0')
+      }
       return
     }
-    mutation.mutate(data)
+    
+    // Нормализация URL изображения - добавляем https:// если отсутствует протокол
+    const normalizedData = {
+      ...data,
+      image_url: data.image_url 
+        ? (data.image_url.startsWith('http://') || data.image_url.startsWith('https://') 
+          ? data.image_url 
+          : `https://${data.image_url}`)
+        : undefined
+    }
+    
+    mutation.mutate(normalizedData)
   }
 
   return (
@@ -158,12 +187,92 @@ const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
       </div>
 
       <div className="form-section">
-        <label>URL изображения (опционально)</label>
-        <input
-          type="url"
-          {...register('image_url')}
-          placeholder="https://example.com/image.jpg"
-        />
+        <label>Изображение (опционально)</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {/* Загрузка файла */}
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) {
+                  setImageFile(file)
+                  setValue('image_url', '')
+                  // Предпросмотр
+                  const reader = new FileReader()
+                  reader.onloadend = () => {
+                    setImagePreview(reader.result as string)
+                  }
+                  reader.readAsDataURL(file)
+                }
+              }}
+              style={{ 
+                width: '100%',
+                padding: '8px',
+                background: 'var(--bg-tertiary)',
+                border: '1px solid rgba(74, 158, 255, 0.15)',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--text-primary)',
+                fontSize: '14px'
+              }}
+            />
+          </div>
+          
+          {/* Или URL */}
+          <div style={{ textAlign: 'center', color: 'var(--text-hint)', fontSize: '13px' }}>
+            или
+          </div>
+          
+          <input
+            type="text"
+            {...register('image_url', {
+              validate: (value) => {
+                if (!value && !imageFile) return true // Опциональное поле
+                if (imageFile) return true // Если загружен файл, URL не нужен
+                // Принимаем любые URL, включая без протокола
+                const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i
+                if (urlPattern.test(value) || value.startsWith('www.') || value.includes('.')) {
+                  return true
+                }
+                return 'Введите корректный URL изображения'
+              },
+              onChange: () => {
+                // Очищаем предпросмотр при изменении URL
+                if (imageFile) {
+                  setImageFile(null)
+                  setImagePreview(null)
+                }
+              }
+            })}
+            placeholder="https://example.com/image.jpg или www.ya.ru/image.jpg"
+            style={{ width: '100%' }}
+          />
+          
+          {/* Предпросмотр изображения */}
+          {imagePreview && (
+            <div style={{ marginTop: '8px' }}>
+              <img 
+                src={imagePreview} 
+                alt="Предпросмотр" 
+                style={{ 
+                  maxWidth: '100%', 
+                  maxHeight: '200px', 
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid rgba(74, 158, 255, 0.2)'
+                }} 
+              />
+              <small style={{ color: 'var(--text-hint)', fontSize: '11px', display: 'block', marginTop: '4px' }}>
+                ⚠️ Файл выбран, но для сохранения нужно загрузить его на сервер. Пока используйте URL изображения.
+              </small>
+            </div>
+          )}
+          
+          <small style={{ color: 'var(--text-hint)', fontSize: '12px', display: 'block' }}>
+            Можно загрузить файл или указать URL изображения (например: www.ya.ru или https://example.com/image.jpg)
+          </small>
+        </div>
+        {errors.image_url && <span className="error">{errors.image_url.message}</span>}
       </div>
 
       <div className="form-disclaimer">
@@ -194,7 +303,7 @@ const CampaignForm = ({ onSuccess, onError }: CampaignFormProps) => {
         className="submit-btn"
         disabled={mutation.isLoading}
       >
-        {mutation.isLoading ? t('common.loading') : 'Создать кампанию'}
+        {mutation.isLoading ? 'Создание...' : 'Создать кампанию'}
       </button>
     </form>
   )

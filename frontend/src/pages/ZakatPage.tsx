@@ -49,6 +49,7 @@ const ZakatPage = () => {
       onError: (error: Error) => {
         console.error('Zakat calculation error:', error)
       },
+      retry: false, // Don't retry automatically to prevent stuck loading state
     }
   )
 
@@ -68,6 +69,7 @@ const ZakatPage = () => {
       onError: (error: Error) => {
         console.error('Zakat payment error:', error)
       },
+      retry: false, // Don't retry automatically to prevent stuck loading state
     }
   )
 

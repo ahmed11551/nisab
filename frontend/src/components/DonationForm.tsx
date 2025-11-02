@@ -57,6 +57,7 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
       onError: (error: Error) => {
         onError?.(error)
       },
+      retry: false, // Don't retry automatically to prevent stuck loading state
     }
   )
 

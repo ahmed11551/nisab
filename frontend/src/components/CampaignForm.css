@@ -1,90 +1,153 @@
 .campaign-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px;
-  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
-  border-radius: 12px;
+  gap: 24px;
+  padding: 24px;
+  background: var(--bg-secondary);
+  background-image: var(--gradient-card);
+  border: 1px solid rgba(74, 158, 255, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
 }
 
 .form-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .form-section label {
   font-size: 14px;
   font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
 }
 
 .form-section label.required::after {
   content: ' *';
-  color: #f44336;
+  color: #ff6b6b;
+  font-weight: 700;
 }
 
 .form-section input,
 .form-section textarea,
 .form-section select {
-  padding: 12px;
-  border: 2px solid var(--tg-theme-secondary-bg-color, #f1f1f1);
-  border-radius: 8px;
+  padding: 14px 18px;
+  border: 1px solid rgba(74, 158, 255, 0.15);
+  border-radius: var(--radius-md);
   font-size: 16px;
-  background-color: var(--tg-theme-bg-color, #ffffff);
-  color: var(--tg-theme-text-color, #000000);
+  font-weight: 500;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
   font-family: inherit;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.form-section input::placeholder,
+.form-section textarea::placeholder {
+  color: var(--text-hint);
 }
 
 .form-section input:focus,
 .form-section textarea:focus,
 .form-section select:focus {
   outline: none;
-  border-color: var(--tg-theme-button-color, #2481cc);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.form-section select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a9eff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
 }
 
 .form-section textarea {
   resize: vertical;
   min-height: 120px;
+  line-height: 1.5;
 }
 
 .error {
-  color: #f44336;
+  color: #ff6b6b;
   font-size: 12px;
+  font-weight: 500;
   margin-top: -4px;
+  padding-left: 4px;
 }
 
 .form-disclaimer {
-  padding: 12px;
-  background-color: var(--tg-theme-bg-color, #ffffff);
-  border-radius: 8px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid rgba(74, 158, 255, 0.1);
+  border-radius: var(--radius-md);
   font-size: 12px;
-  color: var(--tg-theme-hint-color, #999999);
+  color: var(--text-secondary);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  line-height: 1.6;
 }
 
 .form-disclaimer p {
-  margin: 4px 0;
+  margin: 6px 0;
+}
+
+.form-disclaimer p:first-child {
+  margin-top: 0;
+}
+
+.form-disclaimer p:last-child {
+  margin-bottom: 0;
 }
 
 .submit-btn {
   width: 100%;
-  padding: 16px;
-  background-color: var(--tg-theme-button-color, #2481cc);
-  color: var(--tg-theme-button-text-color, #ffffff);
+  padding: 18px;
+  background: var(--gradient-primary);
+  color: var(--text-primary);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-top: 8px;
+  box-shadow: var(--shadow-button);
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.submit-btn:hover:not(:disabled)::before {
+  left: 100%;
 }
 
 .submit-btn:hover:not(:disabled) {
-  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4), 0 3px 12px rgba(74, 158, 255, 0.3);
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .submit-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 

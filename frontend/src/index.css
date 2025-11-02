@@ -12,26 +12,97 @@
   box-sizing: border-box;
 }
 
+/* Modern Dark Theme with Blue Accents */
+:root {
+  /* Dark Background Colors */
+  --bg-primary: #1a1d29;
+  --bg-secondary: #252836;
+  --bg-tertiary: #2d3142;
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #b4b9c7;
+  --text-hint: #8b8fa3;
+  
+  /* Blue Accent Colors */
+  --accent-blue: #4a9eff;
+  --accent-blue-dark: #3a7ecc;
+  --accent-blue-light: #6bb3ff;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #4a9eff 0%, #6bb3ff 100%);
+  --gradient-card: linear-gradient(135deg, rgba(74, 158, 255, 0.1) 0%, rgba(107, 179, 255, 0.05) 100%);
+  
+  /* Shadows - Neumorphic Style */
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
+  --shadow-button: 0 4px 16px rgba(74, 158, 255, 0.3), 0 2px 8px rgba(74, 158, 255, 0.2);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  
+  /* Telegram theme fallbacks - Force dark theme */
+  --tg-theme-bg-color: #1a1d29 !important;
+  --tg-theme-text-color: #ffffff !important;
+  --tg-theme-hint-color: #8b8fa3 !important;
+  --tg-theme-link-color: #4a9eff !important;
+  --tg-theme-button-color: #4a9eff !important;
+  --tg-theme-button-text-color: #ffffff !important;
+  --tg-theme-secondary-bg-color: #252836 !important;
+}
+
+/* Force override Telegram WebApp theme */
+html {
+  background-color: #1a1d29 !important;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: var(--tg-theme-bg-color, #ffffff);
-  color: var(--tg-theme-text-color, #000000);
+  background: #1a1d29 !important;
+  background-image: 
+    radial-gradient(at 20% 50%, rgba(74, 158, 255, 0.1) 0px, transparent 50%),
+    radial-gradient(at 80% 80%, rgba(107, 179, 255, 0.05) 0px, transparent 50%) !important;
+  color: #ffffff !important;
+  transition: background-color 0.3s ease;
 }
 
 #root {
   min-height: 100vh;
 }
 
-/* Telegram theme variables */
-:root {
-  --tg-theme-bg-color: var(--tg-theme-bg-color, #ffffff);
-  --tg-theme-text-color: var(--tg-theme-text-color, #000000);
-  --tg-theme-hint-color: var(--tg-theme-hint-color, #999999);
-  --tg-theme-link-color: var(--tg-theme-link-color, #2481cc);
-  --tg-theme-button-color: var(--tg-theme-button-color, #2481cc);
-  --tg-theme-button-text-color: var(--tg-theme-button-text-color, #ffffff);
-  --tg-theme-secondary-bg-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-blue);
+}
+
+/* Selection */
+::selection {
+  background: var(--accent-blue);
+  color: var(--text-primary);
 }
 
 /* RTL support */

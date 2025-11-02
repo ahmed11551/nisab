@@ -153,7 +153,9 @@ ID: ${donation.id}
   async handleCommand(chatId: number, command: string, params?: string[]) {
     switch (command) {
       case '/start':
-        return this.sendMessage(chatId, 'Добро пожаловать в Nisab! 🕌', {
+        return this.sendMessage(chatId, `Добро пожаловать в Nisab! 🕌
+
+Платформа для садака и закята. Выберите действие:`, {
           reply_markup: {
             inline_keyboard: [
               [
@@ -163,6 +165,10 @@ ID: ${donation.id}
               [
                 { text: '📊 Калькулятор закята', callback_data: 'zakat' },
                 { text: '🎯 Кампании', callback_data: 'campaigns' },
+              ],
+              [
+                { text: '📖 История', callback_data: 'history' },
+                { text: 'ℹ️ Помощь', callback_data: 'help' },
               ],
               [
                 {
@@ -240,8 +246,78 @@ ID: ${donation.id}
           },
         })
 
+      case '/help':
+        return this.sendMessage(chatId, `📖 <b>Помощь по использованию бота</b>
+
+<b>Доступные команды:</b>
+/start - Главное меню
+/donate - Пожертвовать
+/support - Поддержать проект
+/zakat - Калькулятор закята
+/subscribe - Подписки
+/help - Эта справка
+
+<b>Основные функции:</b>
+💰 <b>Пожертвование</b> - разовое пожертвование в выбранный фонд
+📅 <b>Подписка</b> - регулярное ежемесячное пожертвование
+📊 <b>Закят</b> - калькулятор для расчета закята
+🎯 <b>Кампании</b> - целевые сборы
+📖 <b>История</b> - ваши пожертвования и подписки
+
+<b>Мини-приложение:</b>
+Нажмите кнопку "🌐 Открыть Mini App" для доступа к полному функционалу платформы.`, {
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: '🌐 Открыть Mini App', web_app: { url: `${config.corsOrigin}` } },
+              ],
+              [
+                { text: '◀️ Назад', callback_data: 'start' },
+              ],
+            ],
+          },
+        })
+
+      case '/info':
+        try {
+          const botInfo = await this.getMe()
+          return this.sendMessage(chatId, `ℹ️ <b>Информация о боте</b>
+
+<b>Название:</b> ${botInfo.result.first_name}
+<b>Username:</b> @${botInfo.result.username}
+<b>Версия:</b> 1.0.0
+
+<b>О платформе:</b>
+Nisab - платформа для садака и закята. Мы помогаем мусульманам делать пожертвования в проверенные фонды и рассчитывать закят.
+
+<b>Контакты:</b>
+Для поддержки используйте команду /help или откройте Mini App.`, {
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: '🌐 Открыть Mini App', web_app: { url: `${config.corsOrigin}` } },
+                ],
+              ],
+            },
+          })
+        } catch (error) {
+          logger.error('Failed to get bot info:', error)
+          return this.sendMessage(chatId, 'Информация о боте временно недоступна.')
+        }
+
       default:
-        return this.sendMessage(chatId, 'Неизвестная команда. Используйте /start для начала.')
+        return this.sendMessage(chatId, 'Неизвестная команда. Используйте /start для начала или /help для справки.', {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: '🏠 Главное меню', callback_data: 'start' },
+                { text: '📖 Помощь', callback_data: 'help' },
+              ],
+            ],
+          },
+        })
     }
   }
 
@@ -353,7 +429,7 @@ ID: ${donation.id}
           },
         })
       } else if (data === 'history') {
-        await this.sendMessage(from.id, 'История пожертвований:', {
+        await this.sendMessage(from.id, '📖 История пожертвований и подписок доступна в Mini App:', {
           reply_markup: {
             inline_keyboard: [
               [
@@ -365,6 +441,10 @@ ID: ${donation.id}
             ],
           },
         })
+      } else if (data === 'help') {
+        await this.handleCommand(from.id, '/help')
+      } else if (data === 'start') {
+        await this.handleCommand(from.id, '/start')
       }
     } catch (error: any) {
       logger.error('Failed to handle callback query:', error)
@@ -382,6 +462,60 @@ ID: ${donation.id}
       })
     } catch (error: any) {
       logger.error('Failed to answer callback query:', error)
+    }
+  }
+
+  /**
+   * Установка webhook
+   */
+  async setWebhook(url: string) {
+    try {
+      const response = await this.client.post('/setWebhook', {
+        url,
+      })
+      return response.data
+    } catch (error: any) {
+      logger.error('Failed to set webhook:', error.response?.data || error.message)
+      throw error
+    }
+  }
+
+  /**
+   * Получение информации о webhook
+   */
+  async getWebhookInfo() {
+    try {
+      const response = await this.client.get('/getWebhookInfo')
+      return response.data
+    } catch (error: any) {
+      logger.error('Failed to get webhook info:', error.response?.data || error.message)
+      throw error
+    }
+  }
+
+  /**
+   * Удаление webhook
+   */
+  async deleteWebhook() {
+    try {
+      const response = await this.client.post('/deleteWebhook', { drop_pending_updates: true })
+      return response.data
+    } catch (error: any) {
+      logger.error('Failed to delete webhook:', error.response?.data || error.message)
+      throw error
+    }
+  }
+
+  /**
+   * Получение информации о боте
+   */
+  async getMe() {
+    try {
+      const response = await this.client.get('/getMe')
+      return response.data
+    } catch (error: any) {
+      logger.error('Failed to get bot info:', error.response?.data || error.message)
+      throw error
     }
   }
 }

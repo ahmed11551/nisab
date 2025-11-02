@@ -40,6 +40,7 @@ const PartnerApplicationPage = () => {
       onError: (error: Error) => {
         console.error('Failed to submit application:', error)
       },
+      retry: false, // Don't retry automatically to prevent stuck loading state
     }
   )
 

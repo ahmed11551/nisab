@@ -52,6 +52,7 @@ const CampaignDonateForm = ({ campaignId, onSuccess, onError }: CampaignDonateFo
       onError: (error: Error) => {
         onError?.(error)
       },
+      retry: false, // Don't retry automatically to prevent stuck loading state
     }
   )
 

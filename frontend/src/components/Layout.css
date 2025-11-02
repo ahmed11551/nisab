@@ -2,12 +2,12 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-bottom: 60px; /* Space for bottom nav */
+  padding-bottom: 70px; /* Space for bottom nav */
 }
 
 .layout-main {
   flex: 1;
-  padding: 16px;
+  padding: 20px 16px;
   max-width: 100%;
   overflow-x: hidden;
 }
@@ -20,11 +20,14 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background-color: var(--tg-theme-bg-color, #ffffff);
-  border-top: 1px solid var(--tg-theme-secondary-bg-color, #f1f1f1);
-  padding: 8px 0;
+  background: var(--bg-secondary);
+  background: linear-gradient(180deg, rgba(37, 40, 54, 0.95) 0%, rgba(29, 33, 45, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(74, 158, 255, 0.1);
+  padding: 12px 8px;
   z-index: 1000;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5), 0 -2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .nav-item {
@@ -33,26 +36,56 @@
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  color: var(--tg-theme-hint-color, #999999);
-  padding: 4px 12px;
-  border-radius: 8px;
-  transition: all 0.2s;
+  color: var(--text-hint);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 60px;
+  position: relative;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--radius-md);
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav-item:hover {
+  color: var(--text-primary);
+  transform: translateY(-2px);
 }
 
 .nav-item.active {
-  color: var(--tg-theme-button-color, #2481cc);
-  background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  color: var(--accent-blue);
+  background: rgba(74, 158, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(74, 158, 255, 0.2);
+}
+
+.nav-item.active::before {
+  opacity: 0.1;
 }
 
 .nav-icon {
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 4px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .nav-label {
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+  letter-spacing: 0.3px;
 }
 
 @media (max-width: 768px) {
@@ -61,7 +94,11 @@
   }
   
   .nav-icon {
-    font-size: 18px;
+    font-size: 20px;
+  }
+  
+  .layout-nav {
+    padding: 10px 4px;
   }
 }
 

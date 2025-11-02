@@ -32,7 +32,26 @@ function App() {
     if (tg) {
       tg.ready()
       tg.expand()
+      // Принудительно устанавливаем темную тему
+      if (tg.setHeaderColor) {
+        tg.setHeaderColor('#1a1d29')
+      }
+      if (tg.setBackgroundColor) {
+        tg.setBackgroundColor('#1a1d29')
+      }
+      // Устанавливаем параметры темы
+      if (tg.themeParams) {
+        tg.themeParams.bg_color = '#1a1d29'
+        tg.themeParams.text_color = '#ffffff'
+        tg.themeParams.secondary_bg_color = '#252836'
+        tg.themeParams.button_color = '#4a9eff'
+        tg.themeParams.button_text_color = '#ffffff'
+      }
     }
+    // Принудительно устанавливаем темный фон для body
+    document.body.style.backgroundColor = '#1a1d29'
+    document.body.style.color = '#ffffff'
+    document.documentElement.style.backgroundColor = '#1a1d29'
   }, [tg])
 
   return (
