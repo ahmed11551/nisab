@@ -5,6 +5,7 @@ import { useMutation } from 'react-query'
 import { donationsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
 import ErrorMessage from '../components/ErrorMessage'
+import PaymentForm from './PaymentForm'
 import './DonationForm.css'
 
 interface DonationFormData {
@@ -23,6 +24,8 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
   const { t } = useTranslation()
   const tg = useTelegramWebApp()
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
+  const [showPaymentForm, setShowPaymentForm] = useState(false)
+  const [donationId, setDonationId] = useState<string | null>(null)
 
   const amountPresets = [100, 250, 500, 1000]
 
@@ -45,13 +48,23 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
       }),
     {
       onSuccess: (response) => {
-        if (response.data.payment_url) {
+        if (response.data?.donation_id || response.data?.data?.donation_id) {
+          const id = response.data?.donation_id || response.data?.data?.donation_id
+          setDonationId(id)
+          setShowPaymentForm(true)
+          // Прокрутка к форме оплаты
+          setTimeout(() => {
+            document.querySelector('.payment-form-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }, 100)
+        } else if (response.data?.payment_url || response.data?.data?.payment_url) {
+          // Если есть payment_url (для реального API), открываем его
+          const url = response.data?.payment_url || response.data?.data?.payment_url
           if (tg?.openLink) {
-            tg.openLink(response.data.payment_url)
+            tg.openLink(url)
           } else if (typeof window !== 'undefined') {
-            window.open(response.data.payment_url, '_blank')
+            window.open(url, '_blank')
           }
-          onSuccess?.(response.data.payment_url)
+          onSuccess?.(url)
         }
       },
       onError: (error: Error) => {
@@ -74,7 +87,8 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="donation-form">
+    <div className="donation-form-container">
+      <form onSubmit={handleSubmit(onSubmit)} className="donation-form">
       <div className="amount-presets">
         <label>{t('donate.presets')}</label>
         <div className="preset-buttons">
@@ -134,6 +148,27 @@ const DonationForm = ({ fundId, onSuccess, onError }: DonationFormProps) => {
         {mutation.isLoading ? t('common.loading') : `${t('donate.continue')} ${amount || 0} ₽`}
       </button>
     </form>
+
+      {/* Форма оплаты */}
+      {showPaymentForm && amount && amount > 0 && (
+        <div className="payment-form-wrapper">
+          <PaymentForm
+            amount={amount}
+            currency="RUB"
+            onSuccess={() => {
+              setShowPaymentForm(false)
+              onSuccess?.('payment_success')
+              if (tg?.showAlert) {
+                tg.showAlert('Платеж успешно обработан! Спасибо за ваше пожертвование 🙏')
+              }
+            }}
+            onCancel={() => {
+              setShowPaymentForm(false)
+            }}
+          />
+        </div>
+      )}
+    </div>
   )
 }
 

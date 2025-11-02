@@ -5,6 +5,7 @@ import { useMutation } from 'react-query'
 import { campaignsApi } from '../services/api'
 import { useTelegramWebApp } from '../hooks/useTelegramWebApp'
 import ErrorMessage from '../components/ErrorMessage'
+import PaymentForm from './PaymentForm'
 import './CampaignDonateForm.css'
 
 interface CampaignDonateFormData {
@@ -21,6 +22,7 @@ const CampaignDonateForm = ({ campaignId, onSuccess, onError }: CampaignDonateFo
   const { t } = useTranslation()
   const tg = useTelegramWebApp()
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
+  const [showPaymentForm, setShowPaymentForm] = useState(false)
 
   const amountPresets = [100, 250, 500, 1000, 2500, 5000]
 
@@ -40,13 +42,19 @@ const CampaignDonateForm = ({ campaignId, onSuccess, onError }: CampaignDonateFo
       }),
     {
       onSuccess: (response) => {
-        if (response.data.payment_url) {
+        if (response.data?.donation_id || response.data?.data?.donation_id) {
+          setShowPaymentForm(true)
+          setTimeout(() => {
+            document.querySelector('.payment-form-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }, 100)
+        } else if (response.data?.payment_url || response.data?.data?.payment_url) {
+          const url = response.data?.payment_url || response.data?.data?.payment_url
           if (tg?.openLink) {
-            tg.openLink(response.data.payment_url)
+            tg.openLink(url)
           } else if (typeof window !== 'undefined') {
-            window.open(response.data.payment_url, '_blank')
+            window.open(url, '_blank')
           }
-          onSuccess?.(response.data.payment_url)
+          onSuccess?.(url)
         }
       },
       onError: (error: Error) => {
@@ -69,7 +77,8 @@ const CampaignDonateForm = ({ campaignId, onSuccess, onError }: CampaignDonateFo
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="campaign-donate-form">
+    <div className="campaign-donate-form-container">
+      <form onSubmit={handleSubmit(onSubmit)} className="campaign-donate-form">
       <div className="amount-presets">
         <label>{t('donate.presets')}</label>
         <div className="preset-buttons">
@@ -126,6 +135,27 @@ const CampaignDonateForm = ({ campaignId, onSuccess, onError }: CampaignDonateFo
         {mutation.isLoading ? t('common.loading') : `Присоединиться ${amount || 0} ₽`}
       </button>
     </form>
+
+      {/* Форма оплаты */}
+      {showPaymentForm && amount && amount > 0 && (
+        <div className="payment-form-wrapper">
+          <PaymentForm
+            amount={amount}
+            currency="RUB"
+            onSuccess={() => {
+              setShowPaymentForm(false)
+              onSuccess?.('payment_success')
+              if (tg?.showAlert) {
+                tg.showAlert('Платеж успешно обработан! Спасибо за ваше пожертвование 🙏')
+              }
+            }}
+            onCancel={() => {
+              setShowPaymentForm(false)
+            }}
+          />
+        </div>
+      )}
+    </div>
   )
 }
 
