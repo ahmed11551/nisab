@@ -15,7 +15,10 @@ const PartnersPage = () => {
 
   const { data: countries, error: countriesError } = useQuery(
     'partner-countries',
-    () => partnersApi.getCountries().then((res) => res.data),
+    () => partnersApi.getCountries().then((res) => {
+      // Поддержка формата: { success: true, data: [...] } или [...]
+      return Array.isArray(res.data) ? res.data : (res.data?.data || res.data)
+    }),
     {
       retry: 2,
       refetchOnWindowFocus: false,
@@ -33,7 +36,10 @@ const PartnersPage = () => {
           country: selectedCountry || undefined,
           categories: selectedCategories.join(',') || undefined,
         })
-        .then((res) => res.data),
+        .then((res) => {
+          // Поддержка формата: { success: true, data: {...} } или {...}
+          return res.data?.data || res.data
+        }),
     {
       enabled: true,
       retry: 2,

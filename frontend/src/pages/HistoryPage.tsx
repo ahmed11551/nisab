@@ -23,7 +23,10 @@ const HistoryPage = () => {
           type: filters.type || undefined,
           period: filters.period || undefined,
         })
-        .then((res) => res.data),
+        .then((res) => {
+          // Поддержка формата: { success: true, data: {...} } или {...}
+          return res.data?.data || res.data
+        }),
     {
       enabled: activeTab === 'history',
       retry: 2,
@@ -36,7 +39,10 @@ const HistoryPage = () => {
 
   const { data: reports, isLoading: reportsLoading, error: reportsError, refetch: refetchReports } = useQuery(
     'fund-reports',
-    () => reportsApi.getFundReports().then((res) => res.data),
+    () => reportsApi.getFundReports().then((res) => {
+      // Поддержка формата: { success: true, data: {...} } или {...}
+      return res.data?.data || res.data
+    }),
     {
       enabled: activeTab === 'reports',
       retry: 2,

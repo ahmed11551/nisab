@@ -23,7 +23,10 @@ const CampaignsPage = () => {
           country: filters.country || undefined,
           category: filters.category || undefined,
         })
-        .then((res) => res.data),
+        .then((res) => {
+          // Поддержка формата: { success: true, data: {...} } или {...}
+          return res.data?.data || res.data
+        }),
     {
       enabled: true,
       retry: 2,

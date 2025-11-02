@@ -68,7 +68,10 @@ export const mockApi = {
       const total = funds.length
       const items = funds.slice(from, from + size)
 
-      return mockResponse({
+      // Возвращаем в формате как реальный API: { data: { items, total, ... } }
+      // Но моки возвращают { data: { success: true, data: {...} } }
+      // Поэтому нужно адаптировать для соответствия формату страниц
+      const responseData = {
         success: true,
         data: {
           items,
@@ -76,7 +79,13 @@ export const mockApi = {
           from,
           size,
         },
-      })
+      }
+      return mockResponse(responseData).then(res => ({
+        ...res,
+        // Для совместимости: если используется res.data, то это будет { success: true, data: {...} }
+        // Но страницы ожидают { items, total, ... }, поэтому возвращаем только data часть
+        data: res.data.data || res.data
+      }))
     },
 
     get: async (id: string) => {
@@ -126,7 +135,10 @@ export const mockApi = {
       const total = campaigns.length
       const items = campaigns.slice(from, from + size)
 
-      return mockResponse({
+      // Возвращаем в формате как реальный API: { data: { items, total, ... } }
+      // Но моки возвращают { data: { success: true, data: {...} } }
+      // Поэтому нужно адаптировать для соответствия формату страниц
+      const responseData = {
         success: true,
         data: {
           items,
@@ -134,7 +146,13 @@ export const mockApi = {
           from,
           size,
         },
-      })
+      }
+      return mockResponse(responseData).then(res => ({
+        ...res,
+        // Для совместимости: если используется res.data, то это будет { success: true, data: {...} }
+        // Но страницы ожидают { items, total, ... }, поэтому возвращаем только data часть
+        data: res.data.data || res.data
+      }))
     },
 
     get: async (id: string) => {
@@ -148,7 +166,7 @@ export const mockApi = {
       return mockResponse({
         success: true,
         data: campaign,
-      }).then(res => ({ ...res, data: res.data.data }))
+      })
     },
 
     create: async (data: any) => {
@@ -211,6 +229,7 @@ export const mockApi = {
   // Partners API
   partners: {
     getCountries: async () => {
+      // Возвращаем массив стран напрямую (как реальный API)
       return mockResponse({
         success: true,
         data: DEMO_COUNTRIES,
@@ -254,7 +273,10 @@ export const mockApi = {
       const total = partners.length
       const items = partners.slice(from, from + size)
 
-      return mockResponse({
+      // Возвращаем в формате как реальный API: { data: { items, total, ... } }
+      // Но моки возвращают { data: { success: true, data: {...} } }
+      // Поэтому нужно адаптировать для соответствия формату страниц
+      const responseData = {
         success: true,
         data: {
           items,
@@ -262,7 +284,13 @@ export const mockApi = {
           from,
           size,
         },
-      })
+      }
+      return mockResponse(responseData).then(res => ({
+        ...res,
+        // Для совместимости: если используется res.data, то это будет { success: true, data: {...} }
+        // Но страницы ожидают { items, total, ... }, поэтому возвращаем только data часть
+        data: res.data.data || res.data
+      }))
     },
 
     submitApplication: async (data: any) => {
@@ -297,7 +325,10 @@ export const mockApi = {
       const total = history.length
       const items = history.slice(from, from + size)
 
-      return mockResponse({
+      // Возвращаем в формате как реальный API: { data: { items, total, ... } }
+      // Но моки возвращают { data: { success: true, data: {...} } }
+      // Поэтому нужно адаптировать для соответствия формату страниц
+      const responseData = {
         success: true,
         data: {
           items,
@@ -305,7 +336,13 @@ export const mockApi = {
           from,
           size,
         },
-      })
+      }
+      return mockResponse(responseData).then(res => ({
+        ...res,
+        // Для совместимости: если используется res.data, то это будет { success: true, data: {...} }
+        // Но страницы ожидают { items, total, ... }, поэтому возвращаем только data часть
+        data: res.data.data || res.data
+      }))
     },
   },
 

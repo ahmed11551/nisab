@@ -28,7 +28,10 @@ const DonatePage = () => {
           purpose: filters.purpose || undefined,
           query: filters.query || undefined,
         })
-        .then((res) => res.data),
+        .then((res) => {
+          // Поддержка формата: { success: true, data: {...} } или {...}
+          return res.data?.data || res.data
+        }),
     {
       enabled: true,
       retry: 2,
