@@ -98,12 +98,13 @@ const PaymentForm = ({ amount, currency = 'RUB', onSuccess, onCancel }: PaymentF
     return qrData
   }
 
-  // Обновление QR-кода при изменении метода оплаты или суммы
+  // Обновление QR-кода при изменении метода оплаты
   useEffect(() => {
     if (paymentMethod === 'qr') {
-      setQrCodeValue(generateQRCode())
+      const newQr = generateQRCode()
+      setQrCodeValue(newQr)
     }
-  }, [paymentMethod, amount, currency])
+  }, [paymentMethod]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSubmit = async (data: PaymentFormData) => {
     setProcessing(true)

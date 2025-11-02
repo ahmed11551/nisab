@@ -12,6 +12,7 @@ const SupportPage = () => {
   const [amount, setAmount] = useState<number | null>(null)
   const [customAmount, setCustomAmount] = useState<string>('')
   const [success, setSuccess] = useState(false)
+  const [showPaymentForm, setShowPaymentForm] = useState(false)
 
   const amountPresets = [500, 1000, 2500]
 
@@ -25,11 +26,17 @@ const SupportPage = () => {
       }),
     {
       onSuccess: (response) => {
-        if (response.data.payment_url) {
+        if (response.data?.donation_id || response.data?.data?.donation_id) {
+          setShowPaymentForm(true)
+          setTimeout(() => {
+            document.querySelector('.payment-form-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }, 100)
+        } else if (response.data?.payment_url || response.data?.data?.payment_url) {
+          const url = response.data?.payment_url || response.data?.data?.payment_url
           if (tg?.openLink) {
-            tg.openLink(response.data.payment_url)
+            tg.openLink(url)
           } else if (typeof window !== 'undefined') {
-            window.open(response.data.payment_url, '_blank')
+            window.open(url, '_blank')
           }
           setSuccess(true)
         }
@@ -141,6 +148,26 @@ const SupportPage = () => {
           </>
         )}
       </div>
+
+      {/* Форма оплаты */}
+      {showPaymentForm && amount && amount > 0 && (
+        <div className="payment-form-wrapper">
+          <PaymentForm
+            amount={amount}
+            currency="RUB"
+            onSuccess={() => {
+              setShowPaymentForm(false)
+              setSuccess(true)
+              if (tg?.showAlert) {
+                tg.showAlert('Платеж успешно обработан! Спасибо за вашу поддержку 🙏')
+              }
+            }}
+            onCancel={() => {
+              setShowPaymentForm(false)
+            }}
+          />
+        </div>
+      )}
     </div>
   )
 }
