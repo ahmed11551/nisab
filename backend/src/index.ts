@@ -18,8 +18,14 @@ const PORT = config.port
 
 // Middleware
 app.use(helmet())
+// Support comma-separated CORS origins from env (e.g. "https://t.me,https://web.telegram.org,http://localhost:5173,https://xavi-overoptimistic-ciera.ngrok-free.dev")
+const allowedOrigins = (config.corsOrigin || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter((s) => s.length > 0)
+
 app.use(cors({
-  origin: config.corsOrigin,
+  origin: allowedOrigins.length > 1 ? allowedOrigins : config.corsOrigin,
   credentials: true,
 }))
 
