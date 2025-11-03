@@ -107,7 +107,7 @@ ID: ${donation.id}
           [
             {
               text: '🌐 Открыть Mini App',
-              web_app: { url: `${config.corsOrigin}/donate` },
+              web_app: { url: `${config.frontendUrl}/donate` },
             },
           ],
         ],
@@ -140,7 +140,7 @@ ID: ${donation.id}
         inline_keyboard: [
           [
             { text: '📅 Управление подпиской', callback_data: `subscription:${subscription.id}` },
-            { text: '🌐 Открыть Mini App', web_app: { url: `${config.corsOrigin}/subscription` } },
+            { text: '🌐 Открыть Mini App', web_app: { url: `${config.frontendUrl}/subscription` } },
           ],
         ],
       },
@@ -173,7 +173,7 @@ ID: ${donation.id}
               [
                 {
                   text: '🌐 Открыть Mini App',
-                  web_app: { url: `${config.corsOrigin}` },
+                  web_app: { url: `${config.frontendUrl}` },
                 },
               ],
             ],
@@ -192,7 +192,7 @@ ID: ${donation.id}
               [
                 {
                   text: '🌐 Открыть Mini App',
-                  web_app: { url: `${config.corsOrigin}/donate` },
+                  web_app: { url: `${config.frontendUrl}/donate` },
                 },
               ],
             ],
@@ -211,7 +211,7 @@ ID: ${donation.id}
               [
                 {
                   text: '🌐 Открыть Mini App',
-                  web_app: { url: `${config.corsOrigin}/support` },
+                  web_app: { url: `${config.frontendUrl}/support` },
                 },
               ],
             ],
@@ -225,7 +225,7 @@ ID: ${donation.id}
               [
                 {
                   text: '🌐 Открыть калькулятор',
-                  web_app: { url: `${config.corsOrigin}/zakat` },
+                  web_app: { url: `${config.frontendUrl}/zakat` },
                 },
               ],
             ],
@@ -239,7 +239,7 @@ ID: ${donation.id}
               [
                 {
                   text: '🌐 Открыть подписки',
-                  web_app: { url: `${config.corsOrigin}/subscription` },
+                  web_app: { url: `${config.frontendUrl}/subscription` },
                 },
               ],
             ],
@@ -253,13 +253,13 @@ ID: ${donation.id}
               [
                 {
                   text: '🌐 Открыть кампании',
-                  web_app: { url: `${config.corsOrigin}/campaigns` },
+                  web_app: { url: `${config.frontendUrl}/campaigns` },
                 },
               ],
               [
                 {
                   text: '➕ Создать кампанию',
-                  web_app: { url: `${config.corsOrigin}/campaigns/create` },
+                  web_app: { url: `${config.frontendUrl}/campaigns/create` },
                 },
               ],
             ],
@@ -273,13 +273,13 @@ ID: ${donation.id}
               [
                 {
                   text: '🌐 Открыть каталог фондов',
-                  web_app: { url: `${config.corsOrigin}/partners` },
+                  web_app: { url: `${config.frontendUrl}/partners` },
                 },
               ],
               [
                 {
                   text: '📝 Оставить заявку на партнёрство',
-                  web_app: { url: `${config.corsOrigin}/partners/apply` },
+                  web_app: { url: `${config.frontendUrl}/partners/apply` },
                 },
               ],
             ],
@@ -312,7 +312,7 @@ ID: ${donation.id}
           reply_markup: {
             inline_keyboard: [
               [
-                { text: '🌐 Открыть Mini App', web_app: { url: `${config.corsOrigin}` } },
+                { text: '🌐 Открыть Mini App', web_app: { url: `${config.frontendUrl}` } },
               ],
               [
                 { text: '◀️ Назад', callback_data: 'start' },
@@ -339,7 +339,7 @@ Nisab - платформа для садака и закята. Мы помог�
             reply_markup: {
               inline_keyboard: [
                 [
-                  { text: '🌐 Открыть Mini App', web_app: { url: `${config.corsOrigin}` } },
+                  { text: '🌐 Открыть Mini App', web_app: { url: `${config.frontendUrl}` } },
                 ],
               ],
             },
@@ -384,7 +384,7 @@ Nisab - платформа для садака и закята. Мы помог�
               [
                 {
                   text: '🌐 Перейти к оплате',
-                  web_app: { url: `${config.corsOrigin}/support?amount=${amount}` },
+                  web_app: { url: `${config.frontendUrl}/support?amount=${amount}` },
                 },
               ],
             ],
@@ -402,7 +402,7 @@ Nisab - платформа для садака и закята. Мы помог�
               [
                 {
                   text: '🌐 Перейти к оплате',
-                  web_app: { url: `${config.corsOrigin}/donate?fund=${fundId}&amount=${sum || ''}` },
+                  web_app: { url: `${config.frontendUrl}/donate?fund=${fundId}&amount=${sum || ''}` },
                 },
               ],
             ],
@@ -420,7 +420,7 @@ Nisab - платформа для садака и закята. Мы помог�
               [
                 {
                   text: '🌐 Перейти к подписке',
-                  web_app: { url: `${config.corsOrigin}/subscription?plan=${plan}&period=${period}` },
+                  web_app: { url: `${config.frontendUrl}/subscription?plan=${plan}&period=${period}` },
                 },
               ],
             ],
@@ -434,7 +434,7 @@ Nisab - платформа для садака и закята. Мы помог�
               [
                 {
                   text: '🌐 Присоединиться к кампании',
-                  web_app: { url: `${config.corsOrigin}/campaigns/${campaignId}` },
+                  web_app: { url: `${config.frontendUrl}/campaigns/${campaignId}` },
                 },
               ],
             ],
@@ -447,7 +447,7 @@ Nisab - платформа для садака и закята. Мы помог�
               [
                 {
                   text: '🌐 Открыть калькулятор',
-                  web_app: { url: `${config.corsOrigin}/zakat` },
+                  web_app: { url: `${config.frontendUrl}/zakat` },
                 },
               ],
             ],
@@ -468,7 +468,7 @@ Nisab - платформа для садака и закята. Мы помог�
               [
                 {
                   text: '🌐 Открыть историю',
-                  web_app: { url: `${config.corsOrigin}/history` },
+                  web_app: { url: `${config.frontendUrl}/history` },
                 },
               ],
             ],

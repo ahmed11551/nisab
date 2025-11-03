@@ -6,6 +6,7 @@ export const config = {
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT || '3000', 10),
   corsOrigin: process.env.CORS_ORIGIN || process.env.FRONTEND_URL || 'http://localhost:5173',
+  frontendUrl: process.env.FRONTEND_URL || (process.env.CORS_ORIGIN?.split(',')[0]?.trim() || 'http://localhost:5173'),
 
   database: {
     url: process.env.DATABASE_URL || 'postgresql://nisab:nisab_password@localhost:5432/nisab_db',
